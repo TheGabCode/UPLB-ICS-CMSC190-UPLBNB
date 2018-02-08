@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "782116946955",
+    "firebase_url": "https://uplbnb.firebaseio.com",
+    "project_id": "uplbnb",
+    "storage_bucket": "uplbnb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782116946955:android:b6ad841e4f97cc4e",
+        "android_client_info": {
+          "package_name": "com.cmsc190.ics.uplbnb"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782116946955-2nksej1ee37l7qsgmjmpoh4kq0sgsds4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cmsc190.ics.uplbnb",
+            "certificate_hash": "19975ebbf267d7c1704378df3a0d63bf17c24220"
+          }
+        },
+        {
+          "client_id": "782116946955-0f7ojif0nj29rqllmn1lluoqsbi14a8n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDoObjbT1Tm8JWn3PvfEDCoAN94b8eaP0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782116946955-0f7ojif0nj29rqllmn1lluoqsbi14a8n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

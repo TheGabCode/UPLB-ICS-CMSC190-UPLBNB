@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="visible"
+    tools:context="com.cmsc190.ics.uplbnb.Sign_in"
+    android:background="#214C74">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/textView2"
+                android:layout_marginTop="117dp"
+                app:srcCompat="@drawable/temp_logo" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="263dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-5dp"
+                android:fontFamily="@font/biryani_light"
+                android:paddingTop="0dp"
+                android:text="@string/uplbnb"
+                android:textAlignment="center"
+                android:textColor="@color/colorTitleTextLogin"
+                android:textSize="24sp" />
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="273dp"
+
+                android:layout_height="35dp"
+                android:layout_below="@+id/textView2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:background="#E5E5E8"
+                android:ems="10"
+                android:hint="   Username"
+
+                android:inputType="textPersonName"
+                android:textAlignment="textStart"
+                android:textColor="#000" />
+
+            <EditText
+                android:id="@+id/editText2"
+                android:layout_width="273dp"
+                android:layout_height="35dp"
+                android:layout_alignStart="@+id/editText"
+                android:layout_below="@+id/editText"
+                android:layout_marginTop="10dp"
+                android:background="#E5E5E8"
+                android:ems="10"
+                android:hint="   Password"
+                android:inputType="textPassword"
+                android:textColor="#000" />
+
+            <Button
+                android:id="@+id/buttonSignIn"
+                android:layout_width="173dp"
+                android:layout_height="35dp"
+
+                android:layout_below="@+id/editText2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="11dp"
+                android:background="@drawable/signinbutton"
+                android:onClick="onClick"
+                android:text="Sign In"
+                android:textColor="#FBFEFB" />
+
+            <TextView
+                android:id="@+id/signuptext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/buttonSignIn"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="61dp"
+                android:fontFamily="@font/actor"
+                android:onClick="onClick"
+                android:text="SIGN UP"
+                android:textAlignment="center"
+                android:textColor="#FBFEFB" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</RelativeLayout>

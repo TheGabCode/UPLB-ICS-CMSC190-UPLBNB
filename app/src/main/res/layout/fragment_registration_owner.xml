@@ -1,0 +1,112 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cmsc190.ics.uplbnb.registration$PlaceholderFragment">
+
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/editTextRegEmailOwner"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/editText7"
+                android:layout_marginTop="-60dp"
+                android:ems="10"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.505"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="51dp" />
+
+            <EditText
+                android:id="@+id/editTextRegPasswordOwner"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/editText6"
+                android:layout_below="@+id/editText6"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:textColor="#000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="116dp" />
+
+            <EditText
+                android:id="@+id/editTextRegFirstNameOwner"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/editText8"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:ems="10"
+                android:hint="First Name"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="179dp" />
+
+            <EditText
+                android:id="@+id/editTextRegLastNameOwner"
+                android:layout_width="300dp"
+                android:layout_height="48dp"
+                android:layout_above="@+id/editText3"
+                android:layout_alignStart="@+id/editText7"
+                android:ems="10"
+                android:hint="Last Name"
+                android:inputType="textPersonName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="241dp" />
+
+            <EditText
+                android:id="@+id/editTextRegNumberOwner"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/button2"
+                android:layout_alignStart="@+id/editText8"
+                android:layout_marginTop="50dp"
+                android:ems="10"
+                android:hint="Phone number"
+                android:inputType="phone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="316dp" />
+
+            <Button
+                android:id="@+id/buttonFinishOwnerRegister"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="Finish"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.473"
+                app:layout_constraintStart_toStartOf="parent" />
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</RelativeLayout>
