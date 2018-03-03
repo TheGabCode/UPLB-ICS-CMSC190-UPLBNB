@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.vi8e.giant.AddressListActivity">
+    <item
+        android:id="@+id/filterHome"
+        android:orderInCategory="200"
+        android:title="Filter"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/sortHome"
+        android:enabled="false"
+        android:icon="@drawable/common_full_open_on_phone"
+        android:orderInCategory="300"
+        android:title="Sort"
+        app:showAsAction="always|withText" />
+
+</menu>

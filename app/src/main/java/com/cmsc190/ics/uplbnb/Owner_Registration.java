@@ -18,6 +18,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by Dell on 8 Feb 2018.
@@ -32,7 +35,7 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
     private EditText editTextNumber;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-
+    private DatabaseReference databaseReference;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -54,11 +57,11 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
 
 
     private void registerUser(){
-        String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
-        String first_name = editTextFirstName.getText().toString().trim();
-        String last_name = editTextLastName.getText().toString().trim();
-        String number = editTextNumber.getText().toString().trim();
+        final String email = editTextEmail.getText().toString().trim();
+        final String password = editTextPassword.getText().toString().trim();
+        final String first_name = editTextFirstName.getText().toString().trim();
+        final String last_name = editTextLastName.getText().toString().trim();
+        final String number = editTextNumber.getText().toString().trim();
         if(TextUtils.isEmpty(email)){
             Toast.makeText(getActivity(), "Please enter email.",Toast.LENGTH_SHORT).show();
             return;
@@ -87,12 +90,19 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+                            User new_user = new User(email,password,first_name,last_name,"owner",number);
+                            databaseReference = FirebaseDatabase.getInstance().getReference().child("user").child(email.replace(".","_"));
+                            databaseReference.setValue(new_user);
                             progressDialog.dismiss();
                             Toast.makeText(getActivity(),"Owner successfully registered!",Toast.LENGTH_SHORT).show();
                         }
                         else{
                             progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Owner failed to register!",Toast.LENGTH_SHORT).show();
+                            if(task.getException() instanceof FirebaseAuthUserCollisionException){
+                                Toast.makeText(getActivity(),"Email already registered!",Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(getActivity(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });

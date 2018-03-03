@@ -18,6 +18,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Dell on 8 Feb 2018.
@@ -31,12 +37,14 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
     private EditText editTextLastName;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         firebaseAuth = FirebaseAuth.getInstance();
+
         View view =  inflater.inflate(R.layout.fragment_registration,container,false);
 
         progressDialog = new ProgressDialog(getActivity());
@@ -52,10 +60,11 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
 
 
     private void registerUser(){
-        String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
-        String first_name = editTextFirstName.getText().toString().trim();
-        String last_name = editTextLastName.getText().toString().trim();
+        final Map<String, User> users = new HashMap<String,User>();
+        final String email = editTextEmail.getText().toString().trim();
+        final String password = editTextPassword.getText().toString().trim();
+        final String first_name = editTextFirstName.getText().toString().trim();
+        final String last_name = editTextLastName.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)){
             Toast.makeText(getActivity(), "Please enter email.",Toast.LENGTH_SHORT).show();
@@ -81,12 +90,20 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+
+                            User new_user = new User(email,password,first_name,last_name,"renter","");
+                            databaseReference = FirebaseDatabase.getInstance().getReference().child("user").child(email.replace(".","_"));
+                            databaseReference.setValue(new_user);
                             progressDialog.dismiss();
                             Toast.makeText(getActivity(),"Renter successfully registered!",Toast.LENGTH_SHORT).show();
                         }
                         else{
                             progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Renter failed to register!",Toast.LENGTH_SHORT).show();
+                            if(task.getException() instanceof FirebaseAuthUserCollisionException){
+                                Toast.makeText(getActivity(),"Email already registered!",Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(getActivity(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });
