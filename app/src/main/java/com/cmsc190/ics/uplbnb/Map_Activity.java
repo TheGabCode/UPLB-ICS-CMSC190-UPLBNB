@@ -4,6 +4,8 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,12 +36,13 @@ import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Dell on 2 Mar 2018.
  */
 
-public class Map_Activity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener {
+public class Map_Activity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener, LocationListener {
     private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION;
     private Boolean mLocationPermissionGranted = false;
@@ -50,6 +53,8 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
     private static Location deviceLocation;
     private List<Polyline> polylines;
     private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
+    private ArrayList<LatLng> points;
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +63,15 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
         setTitle("Some Place");
         getLocationPermission();
         polylines = new ArrayList<>();
+        points = new ArrayList<LatLng>();
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                2000,
+                1, this);
+
     }
 
     private void initMap() {
@@ -68,10 +82,10 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
     private void moveCamera(LatLng ll, float zoom, String title) {
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, zoom));
 
-        if (!title.equals("Me")) {
+       /* if (!title.equals("Me")) {
             MarkerOptions markerOptions = new MarkerOptions().position(ll).title(title);
             gMap.addMarker(markerOptions);
-        }
+        }*/
 
     }
 
@@ -88,7 +102,7 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
                             //Toast.makeText(Map_Activity.this, "Found current location", Toast.LENGTH_SHORT).show();
                             Location currentLocation = (Location) task.getResult();
                             deviceLocation = (Location) task.getResult();
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "Me");
+                            //moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "Me");
                             LatLng ll = geoLocate();
                             getRouterMarker(ll);
                         } else {
@@ -103,6 +117,8 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+
 
     private void getLocationPermission() {
         String[] permissions = {
@@ -148,7 +164,6 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
     private LatLng geoLocate() {
 
-        Toast.makeText(Map_Activity.this,"Help",Toast.LENGTH_SHORT);
         String search = "Dancel's Dormitory"; //change later with drilldown address
         Geocoder geocoder = new Geocoder(Map_Activity.this);
         List<Address> list = new ArrayList<>();
@@ -160,10 +175,13 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (list.size() > 0) {
             Address a = list.get(0);
-            Toast.makeText(Map_Activity.this,"Wee",Toast.LENGTH_SHORT);
 
             //getRouterMarker(new LatLng(a.getLatitude(),a.getLongitude()));
-            moveCamera(new LatLng(a.getLatitude(), a.getLongitude()), DEFAULT_ZOOM, a.getAddressLine(0));
+
+            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(a.getLatitude(),a.getLongitude())).title(a.getAddressLine(0));
+            gMap.addMarker(markerOptions);
+
+            //moveCamera(new LatLng(a.getLatitude(), a.getLongitude()), DEFAULT_ZOOM, a.getAddressLine(0));
             return new LatLng(a.getLatitude(),a.getLongitude());
         }
         return null;
@@ -182,7 +200,7 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
             }
             gMap.setMyLocationEnabled(true);
             gMap.setBuildingsEnabled(true);
-
+            moveCamera(geoLocate(),DEFAULT_ZOOM,"Me");
         }
     }
 
@@ -212,9 +230,11 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+
         if (polylines.size() > 0) {
             for (Polyline poly : polylines) {
                 poly.remove();
+
             }
         }
 
@@ -230,18 +250,56 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
             polyOptions.width(10 + i * 3);
             polyOptions.addAll(route.get(i).getPoints());
             Polyline polyline = gMap.addPolyline(polyOptions);
+
             polylines.add(polyline);
 
-            Toast.makeText(getApplicationContext(), "Route " + (i + 1) + ": distance - " + route.get(i).getDistanceValue() + ": duration - " + route.get(i).getDurationValue(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Route " + (i + 1) + ": distance - " + route.get(i).getDistanceValue() + ": duration - " + route.get(i).getDurationValue(), Toast.LENGTH_SHORT).show();
         }
 
 
     }
+
+
 
     @Override
     public void onRoutingCancelled() {
 
     }
 
+    private void erasePolyline(){
+        for(Polyline line : polylines){
+            line.remove();
+        }
+        polylines.clear();
+    }
 
+
+    @Override
+    public void onLocationChanged(android.location.Location location) {
+        Toast.makeText(Map_Activity.this,"Moving",Toast.LENGTH_SHORT);
+        getDeviceLocation();
+        //getRouterMarker(new LatLng(location.getLatitude(),location.getLongitude()));
+
+    }
+
+    private void redrawLine(){
+        erasePolyline();
+
+
+
+    }
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
 }
