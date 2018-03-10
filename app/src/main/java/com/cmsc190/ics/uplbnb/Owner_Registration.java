@@ -1,6 +1,7 @@
 package com.cmsc190.ics.uplbnb;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -36,10 +38,12 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth loginAuth;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-
+        loginAuth = FirebaseAuth.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         View view =  inflater.inflate(R.layout.fragment_registration_owner,container,false);
 
@@ -90,11 +94,37 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            User new_user = new User(email,password,first_name,last_name,"owner",number);
-                            databaseReference = FirebaseDatabase.getInstance().getReference().child("user").child(email.replace(".","_"));
-                            databaseReference.setValue(new_user);
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Owner successfully registered!",Toast.LENGTH_SHORT).show();
+                            databaseReference = FirebaseDatabase.getInstance().getReference();
+                            loginAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()){
+                                        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                        String id = firebaseUser.getUid();
+                                        User new_user = new User(email,password,first_name,last_name,"owner",number,id);
+                                        databaseReference.child("user").child(id).setValue(new_user);
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getActivity(),"Owner successfully registered!",Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(getContext(),RenterHome.class);
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(i);
+                                        progressDialog.dismiss();
+
+                                    }
+                                    else{
+                                        Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
+
+                                    }
+                                }
+                            });
+
+
+
+
+
+
+
                         }
                         else{
                             progressDialog.dismiss();

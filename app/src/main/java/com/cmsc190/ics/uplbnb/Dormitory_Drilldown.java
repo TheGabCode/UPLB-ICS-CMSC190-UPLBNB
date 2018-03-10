@@ -61,7 +61,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                 contactPerson = (TextView)getView().findViewById(R.id.drilldownDormitoryContactPerson);
                 contactPerson.setText(e.getContactPerson());
                 contactNumber =  getView().findViewById(R.id.drilldownDormitoryContactNumber1);
-                contactNumber.setText("Contact Number(s) " + e.getContactNumber1() + "");
+                contactNumber.setText(e.getContactNumber1() + "");
                 contactNumber2 =  getView().findViewById(R.id.drilldownDormitoryContactNumber2);
                 contactNumber2.setText(e.getContactNumber2()+"");
                 priceRange =  getView().findViewById(R.id.drilldownDormitoryPriceRange);
@@ -70,15 +70,15 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                     priceRange.append(" - per head");
                 }
                 if(e.isBillsIncludedInRate() == true){
-                    priceRange.append(" ,bills included");
+                    priceRange.append(", bills included");
                 }
                 else{
-                    priceRange.append(" ,bills not included");
+                    priceRange.append(", bills excluded");
                 }
 
 
                 curfewHours = getView().findViewById(R.id.drilldownDormitoryCurfewHours);
-                curfewHours.setText("Curfew Hours: " + e.getCurfewHours());
+                curfewHours.setText(e.getCurfewHours());
                 visitorsAllowed = getView().findViewById(R.id.drilldownDormitoryVisitorsAllowed);
                 //visitorsAllowed.setText("Visitors allowed? ");
                 if(e.isVisitorsAllowed() == true){

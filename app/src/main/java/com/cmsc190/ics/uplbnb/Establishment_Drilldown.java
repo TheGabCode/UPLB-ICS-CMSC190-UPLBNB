@@ -58,14 +58,6 @@ public class Establishment_Drilldown extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
     }
 
@@ -139,9 +131,10 @@ public class Establishment_Drilldown extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Establishment_Item e = (Establishment_Item)i.getSerializableExtra("establishment");
             switch(position){
                 case 0: //overview
-                    Establishment_Item e = (Establishment_Item)i.getSerializableExtra("establishment");
+
                     if(e.getEstablishmentType() == 1){
                         Toast.makeText(getApplicationContext(),e.getEstablishmentName(),Toast.LENGTH_SHORT);
                         Apartment_Drilldown a1 = new Apartment_Drilldown();
@@ -162,6 +155,23 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     }
                     return null;
 
+                case 1: //units
+                    Units_List u1 = new Units_List();
+                    Bundle args3 = new Bundle();
+                    args3.putString("establishmentId",e.getId());
+                    args3.putString("establishmentContact",e.getContactNumber1());
+                    u1.setArguments(args3);
+                    return u1;
+
+                case 2:
+                    Reviews_List r1 = new Reviews_List();
+                    Bundle args4 = new Bundle();
+                    args4.putString("establishmentId",e.getId());
+                    args4.putString("establishmentName",e.getEstablishmentName());
+                    args4.putInt("establishmentType",e.getEstablishmentType());
+                    args4.putFloat("establishmentRating",e.getRating());
+                    r1.setArguments(args4);
+                    return r1;
             }
             return null;
         }
@@ -169,7 +179,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 1;
+            return 3;
         }
     }
 }

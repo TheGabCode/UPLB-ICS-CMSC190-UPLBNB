@@ -85,7 +85,7 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
 
             textViewEstablishmentName = (TextView) itemView.findViewById(R.id.establishment_item_name);
             establishmentCategory = (TextView) itemView.findViewById(R.id.establishment_item_category);
-            ratingBarEstablishment = (RatingBar) itemView.findViewById(R.id.ratingBarEstablishmentList);
+            ratingBarEstablishment = (RatingBar) itemView.findViewById(R.id.establishment_item_rating);
         }
     }
 }

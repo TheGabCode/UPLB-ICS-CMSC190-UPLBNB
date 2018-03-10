@@ -3,9 +3,10 @@
     package="com.cmsc190.ics.uplbnb">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,11 +16,11 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD1HAB2f8dH337Y5PCJBATEJaZIOEzY3xQ"/>
-
+            android:value="AIzaSyD1HAB2f8dH337Y5PCJBATEJaZIOEzY3xQ" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".Sign_in"
             android:screenOrientation="portrait"
@@ -52,10 +53,11 @@
         <activity
             android:name=".Establishment_Drilldown"
             android:label="@string/title_activity_establishment__drilldown"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".Map_Activity" >
-        </activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Map_Activity" />
+        <activity android:name=".WriteReview" />
+        <activity android:name=".ApartmentUnitDrilldown"></activity>
     </application>
 
 </manifest>

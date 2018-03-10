@@ -125,6 +125,9 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
         return view;
     }
 
+    public void stringifyFurniture(){
+
+    }
 
 
     @Override

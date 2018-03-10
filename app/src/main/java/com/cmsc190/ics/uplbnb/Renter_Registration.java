@@ -1,6 +1,7 @@
 package com.cmsc190.ics.uplbnb;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -39,12 +41,14 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth loginAuth;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         firebaseAuth = FirebaseAuth.getInstance();
-
+        loginAuth = FirebaseAuth.getInstance();
         View view =  inflater.inflate(R.layout.fragment_registration,container,false);
 
         progressDialog = new ProgressDialog(getActivity());
@@ -90,10 +94,31 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+                            databaseReference = FirebaseDatabase.getInstance().getReference();
+                            loginAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if(task.isSuccessful()){
+                                        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                                        String id = firebaseUser.getUid();
+                                        User new_user = new User(email,password,first_name,last_name,"renter","",id);
+                                        databaseReference.child("user").child(id).setValue(new_user);
+                                        progressDialog.dismiss();
+                                        Toast.makeText(getActivity(),"Renter successfully registered!",Toast.LENGTH_SHORT).show();
+                                        Intent i = new Intent(getContext(),RenterHome.class);
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(i);
+                                        progressDialog.dismiss();
 
-                            User new_user = new User(email,password,first_name,last_name,"renter","");
-                            databaseReference = FirebaseDatabase.getInstance().getReference().child("user").child(email.replace(".","_"));
-                            databaseReference.setValue(new_user);
+                                    }
+                                    else{
+                                        Toast.makeText(getContext(),task.getException().getMessage(),Toast.LENGTH_SHORT).show();
+                                        progressDialog.dismiss();
+
+                                    }
+                                }
+                            });
+
                             progressDialog.dismiss();
                             Toast.makeText(getActivity(),"Renter successfully registered!",Toast.LENGTH_SHORT).show();
                         }
