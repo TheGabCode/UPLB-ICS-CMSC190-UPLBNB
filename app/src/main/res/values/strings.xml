@@ -13,4 +13,17 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_establishment__drilldown">Establishment_Drilldown</string>
+    <string name="title_activity_owner_home">owner_home</string>
+    <string-array name="establishment_types">
+        <item>Apartment</item>
+        <item>Dormitory</item>
+    </string-array>
+    <string-array name="yes_no">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string-array name="furnished_notfurnished">
+        <item>Furnished</item>
+        <item>Unfurnished</item>
+    </string-array>
 </resources>

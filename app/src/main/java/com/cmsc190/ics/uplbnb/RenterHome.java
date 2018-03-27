@@ -57,16 +57,18 @@ public class RenterHome extends AppCompatActivity {
 
             }
         });
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerViewHome);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        establishment_items = new ArrayList<>();
+//        establishment_items = new ArrayList<>();
 
 
-        adapter = new Establishment_Item_Adapter(establishment_items,this);
+//        adapter = new Establishment_Item_Adapter(establishment_items,this);
 
-        recyclerView.setAdapter(adapter);
+//        recyclerView.setAdapter(adapter);
+
         Toast.makeText(getApplicationContext(),"Successfully logged in",Toast.LENGTH_SHORT).show();
 
     }

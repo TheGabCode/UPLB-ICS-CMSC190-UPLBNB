@@ -15,7 +15,7 @@ public class Establishment_Item implements Serializable{
     private String contactPerson;
     private String contactNumber1;
     private String contactNumber2;
-    private int price; //price, fixed for dormitories
+    private String price; //price, fixed for dormitories
     private String address;
     private String curfewHours;
     private boolean visitorsAllowed;
@@ -23,13 +23,18 @@ public class Establishment_Item implements Serializable{
     private boolean billsIncludedInRate;
     private int distanceFromCampus;
     private boolean security;
+    private HashMap<String,Unit_Item> unit;
+    private HashMap<String,Review> review;
     //private List<Unit_Item> units;
     private boolean concealContactPerson;
     private boolean concealPrice;
     private boolean concealAvailableUnits;
+    private String owner_id;
     private float rating;
     private String id;
-    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, int price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, List<Unit_Item> units, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id) {
+
+    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id) {
+        this.owner_id = owner_Id;
         this.establishmentName = establishmentName;
         this.contactPerson = contactPerson;
         this.contactNumber1 = contactNumber1;
@@ -43,15 +48,20 @@ public class Establishment_Item implements Serializable{
         this.billsIncludedInRate = billsIncludedInRate;
         this.distanceFromCampus = distanceFromCampus;
         this.security = security;
-        //this.units = units;
         this.id = id;
+
         this.concealContactPerson = concealContactPerson;
         this.concealPrice = concealPrice;
         this.concealAvailableUnits = concealAvailableUnits;
+        this.unit = new HashMap<String, Unit_Item>();
+        this.review = new HashMap<String, Review>();
     }
 
     public String getEstablishmentName() {
         return establishmentName;
+    }
+    public String getOwner_id(){
+        return owner_id;
     }
 
     public String getId(){return this.id;}
@@ -69,7 +79,7 @@ public class Establishment_Item implements Serializable{
         return contactNumber2;
     }
 
-    public int getPrice() {
+    public String getPrice() {
         return price;
     }
 

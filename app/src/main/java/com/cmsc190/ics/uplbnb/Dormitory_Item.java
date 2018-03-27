@@ -16,9 +16,9 @@ public class Dormitory_Item extends Establishment_Item {
 
     }
 
-    public Dormitory_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, int price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, List<Unit_Item> units, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, HashMap<String, Integer> availableFurniture, boolean ratePerHead, int capacityPerUnit, float rating,String id) {
-        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security, units, concealContactPerson, concealPrice, concealAvailableUnits,rating,id);
-        this.availableFurniture = availableFurniture;
+    public Dormitory_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits,  boolean ratePerHead, int capacityPerUnit, float rating,String id,String owner_id) {
+        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security,concealContactPerson, concealPrice, concealAvailableUnits,rating,id,owner_id);
+        this.availableFurniture = new HashMap<String, Integer>();
         this.ratePerHead = ratePerHead;
         this.capacityPerUnit = capacityPerUnit;
     }

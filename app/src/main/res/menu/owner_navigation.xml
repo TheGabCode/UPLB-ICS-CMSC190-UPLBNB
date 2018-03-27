@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/ownerProfile"
+        android:title="Profile"/>
+    <item android:id="@+id/ownerHome"
+        android:title="Home"/>
+    <item android:id="@+id/addEstablishment"
+        android:title="Add Establishment"/>
+    <item android:id="@+id/appAbout"
+        android:title="About"/>
+    <item android:id="@+id/ownerSignout"
+        android:title="Sign Out"/>
+
+
+
+</menu>

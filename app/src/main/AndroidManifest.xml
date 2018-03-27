@@ -57,7 +57,12 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Map_Activity" />
         <activity android:name=".WriteReview" />
-        <activity android:name=".ApartmentUnitDrilldown"></activity>
+        <activity android:name=".ApartmentUnitDrilldown" />
+        <activity
+            android:name=".OwnerHome"
+            android:label="UPLBnB"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".AddEstablishment"></activity>
     </application>
 
 </manifest>
