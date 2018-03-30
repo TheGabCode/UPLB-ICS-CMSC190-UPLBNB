@@ -13,45 +13,127 @@
         tools:layout_editor_absoluteY="0dp">
 
         <LinearLayout
-            android:id="@+id/addEstablishmentTypeLayout"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+>
 
             <LinearLayout
+                android:id="@+id/addEstablishmentUploadImageLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
+                android:background="@drawable/background_with_shadow"
+                android:layout_marginBottom="5dp">
 
-                <TextView
-                    android:id="@+id/addEstablishmentTypeLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Establishment Type" />
+                <LinearLayout
+                    android:id="@+id/addEstablishmentImagePreviewLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/establishmentTypeSpinner"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/addEstablishmentUploadPhotoPreview"
+                        android:layout_gravity="center"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/picture_placeholder_96px" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/addEstablishmentUploadImageOptions"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:entries="@array/establishment_types" />
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/addEstablishmentUploadImageBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Upload image"
+                        />
+<!--                    <Button
+                        android:id="@+id/addEstablishmentSaveImageBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Save image"/>-->
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/addEstablishmentNameLayout"
+                android:id="@+id/addEstablishmentTypeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="#fff"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp">
+
+                <ImageView
+                    android:id="@+id/establishment_item_category_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="0.5"
+                    app:srcCompat="@drawable/category_48px" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#fff"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:id="@+id/addEstablishmentTypeLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="5dp"
+                        android:text="Establishment Type" />
+
+                    <Spinner
+                        android:id="@+id/establishmentTypeSpinner"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/establishment_types" />
+                </LinearLayout>
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addEstablishmentNameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/establishment_name_48px" />
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#fff"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
                 android:paddingTop="15dp">
 
                 <TextView
                     android:id="@+id/addEstablishmentNameLabel"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:text="Establishment Name" />
 
                 <EditText
@@ -64,14 +146,33 @@
 
 
             </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/establishmentAddressPickerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/addEstablishmentAddressIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/address_48px" />
 
             <LinearLayout
-                android:id="@+id/establishmentAddressPickerLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#fff"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
                 android:paddingTop="15dp">
 
                 <TextView
@@ -90,14 +191,32 @@
 
 
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addEstablishmentPriceLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/addEstablishmentPriceIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/price_48px" />
 
             <LinearLayout
-                android:id="@+id/addEstablishmentPriceLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#fff"
                 android:orientation="vertical"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
+                android:paddingBottom="20dp"
                 android:paddingTop="15dp">
 
                 <TextView
@@ -138,20 +257,20 @@
 
                     <EditText
                         android:id="@+id/addEstablishmentPriceApartmentMin"
-                        android:layout_width="100dp"
+                        android:layout_width="80dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:ems="10"
-                        android:hint="Min. Price"
+                        android:ems="8"
+                        android:hint="Min"
                         android:inputType="numberDecimal" />
 
                     <EditText
                         android:id="@+id/addEstablishmentPriceApartmentMax"
-                        android:layout_width="100dp"
+                        android:layout_width="80dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:ems="10"
-                        android:hint="Max. Price"
+                        android:ems="8"
+                        android:hint="Max"
                         android:inputType="numberDecimal" />
 
                     <CheckBox
@@ -165,14 +284,32 @@
 
 
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/addEstablishmentCurfewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
 
+            <ImageView
+                android:id="@+id/addEstablishmentCurfewIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/curfew_48px" />
             <LinearLayout
-                android:id="@+id/addEstablishmentCurfewLayout"
+
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#fff"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
+
                 android:paddingTop="15dp">
 
                 <TextView
@@ -209,50 +346,173 @@
 
 
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/addEstablishmentApartmentRentYearsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
 
+            <ImageView
+                android:id="@+id/addEstablishmentRentYearsIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/rent_years_2_48px" />
             <LinearLayout
+                android:background="#fff"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
+                android:paddingTop="15dp"
+                android:layout_weight="1">
 
                 <TextView
-                    android:id="@+id/addEstablishmentSecurityLabel"
+                    android:id="@+id/addEstablishmentRentYearsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="Security Measures Implemented" />
+                    android:text="Rent Years" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-
-                    <Spinner
-                        android:id="@+id/securitySpinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:entries="@array/yes_no" />
-                </LinearLayout>
+                <EditText
+                    android:id="@+id/addEstablishmentRentYears"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:ems="10"
+                    android:inputType="number" />
 
 
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/addEstablishmentDormitoryCapacityLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
 
+            <ImageView
+                android:id="@+id/addEstablishmentCapacityIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/capacity_48px" />
+                <LinearLayout
+                    android:background="#fff"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/addEstablishmentCapacityLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Capacity per Unit" />
+
+                    <EditText
+                        android:id="@+id/addEstablishmentCapacityPerUnit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:ems="10"
+                        android:inputType="number" />
+
+
+                </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/addEstablishmentSecurityLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/addEstablishmentSecurityIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/security_48px" />
+
+                <LinearLayout
+                    android:background="#fff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/addEstablishmentSecurityLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp"
+                        android:text="Security Measures Implemented" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+
+                        <Spinner
+                            android:id="@+id/securitySpinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:entries="@array/yes_no" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/addEstablishmentVisitorsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/addEstablishmentVisitorsIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/visitors_48px" />
             <LinearLayout
+                android:background="#fff"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
+                android:paddingTop="15dp"
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/addEstablishmentVisitorsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
                     android:text="Visitors" />
 
                 <LinearLayout
@@ -272,125 +532,133 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/addEstablishmentApartmentRentYearsLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/addEstablishmentRentYearsLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Rent Years" />
+        <LinearLayout
+            android:id="@+id/addEstablishmentApartmentConditionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
 
-                <EditText
-                    android:id="@+id/addEstablishmentRentYears"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:ems="10"
-                    android:inputType="number" />
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/addEstablishmentApartmentConditionLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
-
-                <TextView
-                    android:id="@+id/addEstablishmentConditionLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Condition" />
-
-                <Spinner
-                    android:id="@+id/conditionSpinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:entries="@array/furnished_notfurnished" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/addEstablishmentDormitoryCapacityLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
-
-                <TextView
-                    android:id="@+id/addEstablishmentCapacityLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Capacity per Unit" />
-
-                <EditText
-                    android:id="@+id/addEstablishmentCapacityPerUnit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:ems="10"
-                    android:inputType="number" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
-
-                <TextView
-                    android:id="@+id/addEstablishmentConcealContactPersonLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Conceal contact person?" />
-
+            <ImageView
+                android:id="@+id/addEstablishmentFurnishedIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                    app:srcCompat="@drawable/furnished_48px" />
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:background="#fff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:layout_weight="1"
+                    >
 
+                    <TextView
+                        android:id="@+id/addEstablishmentConditionLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp"
+                        android:text="Condition" />
 
                     <Spinner
-                        android:id="@+id/concealContactPersonSpinner"
+                        android:id="@+id/conditionSpinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:entries="@array/yes_no" />
+                        android:entries="@array/furnished_notfurnished" />
+
+
                 </LinearLayout>
-            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:id="@+id/addEstablishmentConcealContactPersonLayout">
+
+            <ImageView
+                android:id="@+id/addEstablishmentConcealPersonIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/conceal_contact_person_48px" />
+                <LinearLayout
+                    android:background="#fff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/addEstablishmentConcealContactPersonLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp"
+                        android:text="Conceal contact person?" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+
+                        <Spinner
+                            android:id="@+id/concealContactPersonSpinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:entries="@array/yes_no" />
+                    </LinearLayout>
+                </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/addEstablishmentConcealPriceLayout"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/addEstablishmentConcealPriceIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/conceal_price_48px" />
 
             <LinearLayout
+                android:background="#fff"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
+                android:paddingTop="15dp"
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/addEstablishmentConcealPriceLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
                     android:text="Conceal price?" />
 
                 <LinearLayout
@@ -407,19 +675,39 @@
                         android:entries="@array/yes_no" />
                 </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/addEstablishmentConcealUnitsLayout"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/addEstablishmentConcealUnitsIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/hide_48px" />
 
             <LinearLayout
+                android:background="#fff"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
+                android:paddingTop="15dp"
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/addEstablishmentConcealUnitsLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
                     android:text="Conceal units?" />
 
                 <LinearLayout
@@ -436,19 +724,38 @@
                         android:entries="@array/yes_no" />
                 </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:id="@+id/addEstablishmentIncludeBillsInRateLayout"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp">
+
+            <ImageView
+                android:id="@+id/addEstablishmentIncludeBillsInRateIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/include_48px" />
             <LinearLayout
+                android:background="#fff"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="15dp">
+                android:paddingTop="15dp"
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/addEstablishmentIncludeBillsInRateLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
                     android:text="Include bills in rate?" />
 
                 <LinearLayout
@@ -463,16 +770,105 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:entries="@array/yes_no" />
+
                 </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:id="@+id/addEstablishmentFurnitureLayout">
+
+            <ImageView
+                android:id="@+id/addEstablishmentDormFurnitureIcon"
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="25dp"
+                android:layout_weight="0.5"
+                app:srcCompat="@drawable/furnished_48px" />
             <LinearLayout
+                android:background="#fff"
+                android:id="@+id/addEstablishmentFurnitureContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp">
+
+                <TextView
+                    android:id="@+id/addEstablishmentFurnitureLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:text="Furniture, Appliances, Rooms, Misc." />
+
+
+                <LinearLayout
+                    android:id="@+id/dormitoryFurnitureLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/dormitoryFurnitureQty"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="0"
+                        android:ems="10"
+                        android:hint="Quantity"
+                        android:inputType="number" />
+
+                    <EditText
+                        android:id="@+id/dormitoryFurnitureItem"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0"
+                        android:ems="10"
+                        android:hint="Item"
+                        android:inputType="textPersonName" />
+
+                    <ImageButton
+                        android:id="@+id/removeFurnitureBtn"
+
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0"
+                        android:background="@android:color/transparent"
+                        app:srcCompat="@drawable/delete_24px"
+                        android:onClick="deleteFurniture"/>
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/addFurnitureBtn"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="70dp"
+                    android:layout_weight="1"
+                    android:onClick="addFurniture"
+                    android:text="Add Item" />
+
+            </LinearLayout>
+        </LinearLayout>
+            <LinearLayout
+                android:background="@drawable/background_with_shadow"
                 android:id="@+id/addEstablishmentSubmitButtonLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingLeft="0dp"
                 android:paddingTop="0dp">
+
+
 
                 <Button
                     android:id="@+id/addEstablishmentSubmitButton"
