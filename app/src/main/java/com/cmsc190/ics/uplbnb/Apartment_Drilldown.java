@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.content.Intent;
@@ -19,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by Dell on 26 Feb 2018.
@@ -38,6 +42,7 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
     public static TextView rentYears;
     public static TextView condition;
     public static RatingBar rating;
+    public static ImageButton editEstablishmentBtn;
     private DatabaseReference databaseReference;
     public static Apartment_Item e;
     public static FloatingActionButton openMap;
@@ -48,7 +53,27 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
 
         View view =  inflater.inflate(R.layout.fragment_establishment__drilldown,container,false);
         //Establishment_Item e = (Establishment_Item) getArguments().getSerializable("e");
+        editEstablishmentBtn = (ImageButton)view.findViewById(R.id.editEstablishmentBtn);
+        editEstablishmentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editEstablishment();
+            }
+        });
+        rating = (RatingBar)view.findViewById(R.id.drilldownApartmentRating);
+        establishmentName = (TextView) view.findViewById(R.id.drilldownApartmentName);
+        establishmentAddress = (TextView)view.findViewById(R.id.drilldownAparmentAddress);
+        contactPerson = (TextView)view.findViewById(R.id.drilldownAparmentContactPerson);
+        contactNumber2 =  view.findViewById(R.id.drilldownApartmentContactNumber2);
+        contactNumber =  view.findViewById(R.id.drilldownApartmentContactNumber1);
+        priceRange =  view.findViewById(R.id.drilldownApartmentPriceRange);
+        curfewHours = view.findViewById(R.id.drilldownAparmentCurfewHours);
+        visitorsAllowed = view.findViewById(R.id.drilldownApartmentVisitorsAllowed);
+        distanceFromCampus = view.findViewById(R.id.drilldownApartmentDistanceFromCampus);
+        security = view.findViewById(R.id.drilldownApartmentSecurity);
+        condition = view.findViewById(R.id.drilldownApartmentCondition);
         openMap = (FloatingActionButton)view.findViewById(R.id.floatingActionButtonGetDirections);
+        rentYears = view.findViewById(R.id.drilldownApartmentRentYears);
         openMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,23 +82,22 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
             }
         });
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
-        databaseReference.child(getArguments().getString("id")).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child(getArguments().getString("id")).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 e = dataSnapshot.getValue(Apartment_Item.class);
-                rating = (RatingBar)getView().findViewById(R.id.drilldownApartmentRating);
-                rating.setRating(e.getRating());
-                establishmentName = (TextView) getView().findViewById(R.id.drilldownApartmentName);
+
+                rating.setRating(computeRating(e));
+
                 establishmentName.setText(e.getEstablishmentName());
-                establishmentAddress = (TextView)getView().findViewById(R.id.drilldownAparmentAddress);
                 establishmentAddress.setText(e.getAddress());
-                contactPerson = (TextView)getView().findViewById(R.id.drilldownAparmentContactPerson);
+
                 contactPerson.setText(e.getContactPerson());
-                contactNumber =  getView().findViewById(R.id.drilldownApartmentContactNumber1);
+
                 contactNumber.setText(e.getContactNumber1() + "");
-                contactNumber2 =  getView().findViewById(R.id.drilldownApartmentContactNumber2);
+
                 contactNumber2.setText(e.getContactNumber2()+"");
-                priceRange =  getView().findViewById(R.id.drilldownApartmentPriceRange);
+
                 priceRange.setText(e.getPrice() + " PHP");
                 if(e.isBillsIncludedInRate() == true){
                     priceRange.append(",bills included");
@@ -81,27 +105,27 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
                 else{
                     priceRange.append(",bills not included");
                 }
-                curfewHours = getView().findViewById(R.id.drilldownAparmentCurfewHours);
+
                 curfewHours.setText(e.getCurfewHours());
-                visitorsAllowed = getView().findViewById(R.id.drilldownApartmentVisitorsAllowed);
+
                 if(e.isVisitorsAllowed() == true){
                     visitorsAllowed.setText("Yes");
                 }else {
                     visitorsAllowed.setText("No");
                 }
-                distanceFromCampus = getView().findViewById(R.id.drilldownApartmentDistanceFromCampus);
+
                 distanceFromCampus.setText(e.getDistanceFromCampus() + "m");
-                security = getView().findViewById(R.id.drilldownApartmentSecurity);
+
                 if(e.isSecurity() == true){
                     security.setText("Security measures implemented");
                 }
                 else{
                     security.setText("No security measures implemented");
                 }
-                rentYears = getView().findViewById(R.id.drilldownApartmentRentYears);
+
                 rentYears.setText(e.getRentYears()+" ");
 
-                condition = getView().findViewById(R.id.drilldownApartmentCondition);
+
 
                 if(e.isFurnished() == true){
                     condition.setText("Furnished");
@@ -125,10 +149,32 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
         return view;
     }
 
+
+    public void editEstablishment(){
+        Intent i = new Intent(getActivity(),EditEstablishment.class);
+        i.putExtra("establishmentType",1);
+        i.putExtra("establishmentId",e.getId());
+        startActivity(i);
+    }
     public void stringifyFurniture(){
 
     }
 
+    public float computeRating(Establishment_Item e){
+        e.getReviews();
+        float totalSum = 0f;
+        if(e.getReviews() != null){
+            int totalReview = e.getReviews().size();
+            Iterator entries = e.getReviews().entrySet().iterator();
+            while (entries.hasNext()){
+                HashMap.Entry entry = (HashMap.Entry) entries.next();
+                Review value = (Review)entry.getValue();
+                totalSum += value.getRating();
+            }
+            return totalSum/totalReview;
+        }
+        return totalSum;
+    }
 
     @Override
     public void onClick(View view){

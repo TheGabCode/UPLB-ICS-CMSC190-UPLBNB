@@ -1,12 +1,14 @@
 package com.cmsc190.ics.uplbnb;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by Dell on 20 Feb 2018.
  */
 
-public class Apartment_Item extends Establishment_Item {
+public class Apartment_Item extends Establishment_Item implements Serializable {
     //private int fixedPrice; //for apartments if all units have one rate if != null then price is fixed, otherwise each unit must have its own price
     private int rentYears; // for apartment
     private boolean furnished; //for apartments, true if furnished, false otherwise
@@ -15,8 +17,8 @@ public class Apartment_Item extends Establishment_Item {
 
     }
 
-    public Apartment_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, int rentYears, boolean furnished, float rating, String id,String owner_id,boolean isFixedPrice) {
-        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security, concealContactPerson, concealPrice, concealAvailableUnits, rating,id,owner_id);
+    public Apartment_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, int rentYears, boolean furnished, float rating, String id, String owner_id, boolean isFixedPrice, HashMap<String, Review> reviews) {
+        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security, concealContactPerson, concealPrice, concealAvailableUnits, rating,id,owner_id,reviews);
        //this.fixedPrice = fixedPrice;
         this.rentYears = rentYears;
         this.furnished = furnished;
@@ -51,4 +53,6 @@ public class Apartment_Item extends Establishment_Item {
     public boolean isFurnished() {
         return furnished;
     }
+
+
 }

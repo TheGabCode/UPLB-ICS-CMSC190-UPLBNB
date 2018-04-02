@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -52,9 +53,10 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.UUID;
 
-public class AddEstablishment extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class EditEstablishment extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     Spinner establishmentTypeSpinner;
     Spinner securitySpinner;
     Spinner concealContactPersonSpinner;
@@ -97,6 +99,8 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
     FirebaseUser firebaseUser;
     ArrayList<Uri> uriList;
     User user;
+    Intent intent;
+    public static Establishment_Item e;
     private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(14.136028, 121.200107),new LatLng(14.175857, 121.265629)); //Rougly los banos bounds
@@ -109,7 +113,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         databaseReference.child("user").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-              user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
 
             }
 
@@ -164,14 +168,14 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             progressDialog.dismiss();
-                            Toast.makeText(AddEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EditEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(AddEstablishment.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EditEstablishment.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -186,12 +190,12 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
 /*            for(int i = 0; i < uriList.size(); i++){
 
                 }*/
-            }
+        }
 
 
     }
 
-    public void addEstablishment(){
+    public void updateEstablishment(){
         Establishment_Item newEstablishment;
         String establishmentNameString = establishmentName.getText().toString().trim();
         String contactPerson = user.getId();
@@ -217,7 +221,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         int intConcealPrice = concealPriceSpinner.getSelectedItemPosition();
         int intConcealUnits = concealUnitsSpinner.getSelectedItemPosition();
         int intIncludeBillsInRate = includeBillsInRateSpinner.getSelectedItemPosition();
-        float rating = 0f;
+        float rating = e.getRating();
 
         if(establishmentType == 1){
             if(fixedPriceApartment.isChecked()){
@@ -282,7 +286,6 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
             intCapacityPerUnit = Integer.parseInt(capacityPerUnitDorm.getText().toString().trim());
         }
         HashMap<String,Integer> furniture = new HashMap<String, Integer>();
-        HashMap<String, Review> reviews = new HashMap<String, Review>();
         if(establishmentType == 0){
             for(int i = 1; i < dormFurnitureContainer.getChildCount() - 1; i++){
                 View v = dormFurnitureContainer.getChildAt(i);
@@ -305,15 +308,15 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
 
             }
         }
-        databaseReference = FirebaseDatabase.getInstance().getReference("establishment").push();
-        String id = databaseReference.getKey();
+        databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
+        String id = intent.getStringExtra("establishmentId");
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, 100, security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,reviews);
-            databaseReference.setValue(newEstablishment);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, 100, security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,e.getReviews());
+            databaseReference.child(id).setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, 100, security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,reviews);
-            databaseReference.setValue(newEstablishment);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, 100, security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,e.getReviews());
+            databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
         finish();
@@ -324,54 +327,53 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        intent = getIntent();
         initUser();
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_establishment);
+        setContentView(R.layout.activity_edit_establishment);
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
         concealContactPersonSpinner = (Spinner)(findViewById(R.id.concealContactPersonSpinner));
         uriList = new ArrayList<Uri>();
-        concealContactPersonSpinner.setSelection(1);
+        /*concealContactPersonSpinner.setSelection(1);*/
         concealPriceSpinner = (Spinner)findViewById(R.id.concealPriceSpinner);
-        concealPriceSpinner.setSelection(1);
         concealUnitsSpinner = (Spinner)findViewById(R.id.concealUnitsSpinner);
-        concealUnitsSpinner.setSelection(1);
         includeBillsInRateSpinner = (Spinner)findViewById(R.id.includeBillsInRateSpinner);
         securitySpinner = (Spinner)findViewById(R.id.securitySpinner);
         visitorsAllowedSpinner = (Spinner)findViewById(R.id.visitorsAllowedSpinner);
         conditionSpinner = (Spinner)findViewById(R.id.conditionSpinner);
-        dormitoryPriceLayout = (LinearLayout)findViewById(R.id.addEstablishmentPriceDormitoryLayout);
-        apartmentPriceLayout = (LinearLayout)findViewById(R.id.addEstablishmentPriceApartmentLayout);
-        apartmentRentYearsLayout = (LinearLayout)findViewById(R.id.addEstablishmentApartmentRentYearsLayout);
-        apartmentConditionLayout = (LinearLayout)findViewById(R.id.addEstablishmentApartmentConditionLayout);
-        dormitoryCapacityPerUnitLayout = (LinearLayout)findViewById(R.id.addEstablishmentDormitoryCapacityLayout);
-        dormFurnitureContainer = (LinearLayout)findViewById(R.id.addEstablishmentFurnitureContainer);
-        dormitoryFurnitureLayout = (LinearLayout)findViewById(R.id.addEstablishmentFurnitureLayout);
+        dormitoryPriceLayout = (LinearLayout)findViewById(R.id.editEstablishmentPriceDormitoryLayout);
+        apartmentPriceLayout = (LinearLayout)findViewById(R.id.editEstablishmentPriceApartmentLayout);
+        apartmentRentYearsLayout = (LinearLayout)findViewById(R.id.editEstablishmentApartmentRentYearsLayout);
+        apartmentConditionLayout = (LinearLayout)findViewById(R.id.editEstablishmentApartmentConditionLayout);
+        dormitoryCapacityPerUnitLayout = (LinearLayout)findViewById(R.id.editEstablishmentDormitoryCapacityLayout);
+        dormFurnitureContainer = (LinearLayout)findViewById(R.id.editEstablishmentFurnitureContainer);
+        dormitoryFurnitureLayout = (LinearLayout)findViewById(R.id.editEstablishmentFurnitureLayout);
         dormitoryFurnitureQty = (EditText)findViewById(R.id.dormitoryFurnitureQty);
         dormitoryFurnitureItem = (EditText)findViewById(R.id.dormitoryFurnitureItem);
         dormitoryAddItemBtn = (Button)findViewById(R.id.addFurnitureBtn);
         dormitoryDeleteItemBtn = (ImageButton)findViewById(R.id.removeFurnitureBtn);
-        establishmentName = (EditText)findViewById(R.id.addEstablishmentName);
-        dormitoryPrice = (EditText)findViewById(R.id.addEstablishmentPriceDormitory);
+        establishmentName = (EditText)findViewById(R.id.editEstablishmentName);
+        dormitoryPrice = (EditText)findViewById(R.id.editEstablishmentPriceDormitory);
         perHead = (CheckBox)findViewById(R.id.checkBoxPerHead);
-        minPriceApartment = (EditText)findViewById(R.id.addEstablishmentPriceApartmentMin);
-        maxPriceApartment = (EditText)findViewById(R.id.addEstablishmentPriceApartmentMax);
+        minPriceApartment = (EditText)findViewById(R.id.editEstablishmentPriceApartmentMin);
+        maxPriceApartment = (EditText)findViewById(R.id.editEstablishmentPriceApartmentMax);
         fixedPriceApartment = (CheckBox)findViewById(R.id.checkBoxFixedRate);
-        startCurfewHours = (EditText) findViewById(R.id.addEstablishmentCurfewStart);
-        endCurfewHours = (EditText) findViewById(R.id.addEstablishmentCurfewEnd);
-        apartmentRentYears = (EditText)findViewById(R.id.addEstablishmentRentYears);
-        capacityPerUnitDorm = (EditText)findViewById(R.id.addEstablishmentCapacityPerUnit);
-        capacityPerUnitDorm.setText("0");
-        apartmentRentYears.setText("0");
-        uploadImageButton = (Button)findViewById(R.id.addEstablishmentUploadImageBtn);
+        startCurfewHours = (EditText) findViewById(R.id.editEstablishmentCurfewStart);
+        endCurfewHours = (EditText) findViewById(R.id.editEstablishmentCurfewEnd);
+        apartmentRentYears = (EditText)findViewById(R.id.editEstablishmentRentYears);
+        capacityPerUnitDorm = (EditText)findViewById(R.id.editEstablishmentCapacityPerUnit);
+/*        capacityPerUnitDorm.setText("0");
+        apartmentRentYears.setText("0");*/
+        uploadImageButton = (Button)findViewById(R.id.editEstablishmentUploadImageBtn);
         /*saveImageButton = (Button)findViewById(R.id.addEstablishmentSaveImageBtn);*/
-        previewImage = (ImageView)findViewById(R.id.addEstablishmentUploadPhotoPreview);
-        addEstablishmentSubmitButton = (Button)findViewById(R.id.addEstablishmentSubmitButton);
+        previewImage = (ImageView)findViewById(R.id.editEstablishmentUploadPhotoPreview);
+        addEstablishmentSubmitButton = (Button)findViewById(R.id.editEstablishmentSubmitButton);
         addEstablishmentSubmitButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                addEstablishment();
+                updateEstablishment();
             }
         });
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
@@ -380,25 +382,16 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
                 uploadImage();
             }
         });
-
-/*        saveImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveImage();
-            }
-        });*/
-
-
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-        addEstablishmentAddressAutocomplete = (AutoCompleteTextView)findViewById(R.id.addEstablishmentAddress);
+        addEstablishmentAddressAutocomplete = (AutoCompleteTextView)findViewById(R.id.editEstablishmentAddress);
         placeAutocompleteAdapter = new PlaceAutocompleteAdapter(this,mGoogleApiClient,LAT_LNG_BOUNDS,null);
         addEstablishmentAddressAutocomplete.setAdapter(placeAutocompleteAdapter);
-        establishmentTypeSpinner = (Spinner) findViewById(R.id.establishmentTypeSpinner);
+/*        establishmentTypeSpinner = (Spinner) findViewById(R.id.establishmentTypeSpinner);
         establishmentTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -428,7 +421,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
             public void onNothingSelected(AdapterView<?> adapterView) {
 
             }
-        });
+        });*/
         fixedPriceApartment.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -449,11 +442,170 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
 
             }
         });
+
+        getEstablishmentData();
+    }
+
+    public void getEstablishmentData(){
+        Establishment_Item retrieved;
+        String id = intent.getStringExtra("establishmentId");
+        Log.d("Stuff",id);
+        final int eType = intent.getIntExtra("establishmentType",1);
+        databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
+        databaseReference.child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("WTF","Hey");
+                if(eType == 1){
+
+                    e = dataSnapshot.getValue(Apartment_Item.class);
+                    setupEstablishmentInputFields(e);
+                }
+                else if(eType == 0){
+                    e = dataSnapshot.getValue(Dormitory_Item.class);
+                    setupEstablishmentInputFields(e);
+                }else{
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void setupEstablishmentInputFields(Establishment_Item item){
+
+       // Log.d("Stuff1",e.getEstablishmentName());
+        establishmentName.setText(item.getEstablishmentName());
+        addEstablishmentAddressAutocomplete.setText(item.getAddress());
+        if(item.getEstablishmentType() == 1){
+            establishmentType = 1; //if adding apartment
+            //hide capacity per unit and dormitory price
+            apartmentConditionLayout.setVisibility(View.VISIBLE);
+            apartmentPriceLayout.setVisibility(View.VISIBLE);
+            apartmentRentYearsLayout.setVisibility(View.VISIBLE);
+            dormitoryPriceLayout.setVisibility(View.GONE);
+            dormitoryCapacityPerUnitLayout.setVisibility(View.GONE);
+            dormitoryFurnitureLayout.setVisibility(View.GONE);
+            if(((Apartment_Item)item).getIsFixedPrice() == true){
+                fixedPriceApartment.setChecked(true);
+                maxPriceApartment.setText(item.getPrice());
+            }
+            else{
+                fixedPriceApartment.setChecked(false);
+                String min, max;
+                String[] tokens;
+                tokens = item.getPrice().split("-");
+                min = tokens[0];
+                max = tokens[1];
+                minPriceApartment.setText(min);
+                maxPriceApartment.setText(max);
+            }
+            apartmentRentYears.setText(((Apartment_Item) item).getRentYears()+"");
+            if(((Apartment_Item) item).isFurnished()){
+                conditionSpinner.setSelection(0);
+            }
+            else{
+                conditionSpinner.setSelection(1);
+            }
+        }
+        else{
+            establishmentType = 0; //if adding dormitory
+            dormitoryCapacityPerUnitLayout.setVisibility(View.VISIBLE);
+            dormitoryPriceLayout.setVisibility(View.VISIBLE);
+            dormitoryFurnitureLayout.setVisibility(View.VISIBLE);
+            apartmentConditionLayout.setVisibility(View.GONE);
+            apartmentPriceLayout.setVisibility(View.GONE);
+            apartmentRentYearsLayout.setVisibility(View.GONE);
+            dormitoryPrice.setText(item.getPrice());
+            capacityPerUnitDorm.setText(""+((Dormitory_Item)item).getCapacityPerUnit());
+            if(((Dormitory_Item)item).isRatePerHead() == true){
+                perHead.setChecked(true);
+            }
+            else{
+                perHead.setChecked(false);
+            }
+
+            if(((Dormitory_Item)item).getAvailableFurniture() != null){
+                Iterator entries = ((Dormitory_Item)item).getAvailableFurniture().entrySet().iterator();
+                while (entries.hasNext()){
+                    HashMap.Entry entry = (HashMap.Entry) entries.next();
+                    String key = (String)entry.getKey();
+                    Integer value = (Integer)entry.getValue();
+                    addFurniture(key,value);
+                }
+            }
+        }
+
+        if(!item.getCurfewHours().equals("-")){
+            String start,end;
+            String[] tokens;
+            tokens = item.getCurfewHours().split("-");
+            start = tokens[0];
+            end = tokens[1];
+            startCurfewHours.setText(start);
+            endCurfewHours.setText(end);
+        }
+        if(item.isSecurity() == true){
+            securitySpinner.setSelection(0);
+        }
+        else{
+            securitySpinner.setSelection(1);
+        }
+
+        if(item.isVisitorsAllowed() == true){
+            visitorsAllowedSpinner.setSelection(0);
+        }
+        else{
+            visitorsAllowedSpinner.setSelection(1);
+        }
+
+        if(item.isConcealContactPerson() == true){
+            concealContactPersonSpinner.setSelection(0);
+        }
+        else{
+            concealContactPersonSpinner.setSelection(1);
+        }
+
+        if(item.isConcealPrice() == true){
+            concealPriceSpinner.setSelection(0);
+        }
+        else{
+            concealPriceSpinner.setSelection(1);
+        }
+        if(item.isConcealAvailableUnits()){
+            concealUnitsSpinner.setSelection(0);
+        }
+        else{
+            concealUnitsSpinner.setSelection(1);
+        }
+
+        if(item.isBillsIncludedInRate()){
+            includeBillsInRateSpinner.setSelection(0);
+        }
+        else{
+            includeBillsInRateSpinner.setSelection(1);
+        }
     }
 
     public void addFurniture(View v){
         LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View furnitureView = inflater.inflate(R.layout.furniture_layout,null);
+        dormFurnitureContainer.addView(furnitureView,dormFurnitureContainer.getChildCount() - 1);
+    }
+
+    public void addFurniture(String item, int quantity){
+        LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View furnitureView = inflater.inflate(R.layout.furniture_layout,null);
+        EditText itemName = (EditText)furnitureView.findViewById(R.id.dormitoryFurnitureItem);
+        EditText itemQty = (EditText)furnitureView.findViewById(R.id.dormitoryFurnitureQty);
+        itemName.setText(item);
+        itemQty.setText(""+quantity);
         dormFurnitureContainer.addView(furnitureView,dormFurnitureContainer.getChildCount() - 1);
     }
 

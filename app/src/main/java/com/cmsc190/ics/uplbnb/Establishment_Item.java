@@ -1,9 +1,13 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,7 +28,7 @@ public class Establishment_Item implements Serializable{
     private int distanceFromCampus;
     private boolean security;
     private HashMap<String,Unit_Item> unit;
-    private HashMap<String,Review> review;
+    public HashMap<String,Review> review;
     //private List<Unit_Item> units;
     private boolean concealContactPerson;
     private boolean concealPrice;
@@ -33,7 +37,7 @@ public class Establishment_Item implements Serializable{
     private float rating;
     private String id;
 
-    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id) {
+    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> reviews) {
         this.owner_id = owner_Id;
         this.establishmentName = establishmentName;
         this.contactPerson = contactPerson;
@@ -54,7 +58,7 @@ public class Establishment_Item implements Serializable{
         this.concealPrice = concealPrice;
         this.concealAvailableUnits = concealAvailableUnits;
         this.unit = new HashMap<String, Unit_Item>();
-        this.review = new HashMap<String, Review>();
+        this.review = reviews;;
     }
 
     public String getEstablishmentName() {
@@ -67,6 +71,11 @@ public class Establishment_Item implements Serializable{
     public String getId(){return this.id;}
     public float getRating(){ return rating; }
 
+
+
+    public HashMap<String,Review> getReviews(){
+        return review;
+    }
     public String getContactPerson() {
         return contactPerson;
     }
@@ -134,5 +143,7 @@ public class Establishment_Item implements Serializable{
 
     public Establishment_Item() {
     }
+
+
 }
 

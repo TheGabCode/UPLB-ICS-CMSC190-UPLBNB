@@ -63,7 +63,8 @@
             android:name=".OwnerHome"
             android:label="UPLBnB"
             android:theme="@style/AppTheme" />
-        <activity android:name=".AddEstablishment"></activity>
+        <activity android:name=".AddEstablishment" />
+        <activity android:name=".EditEstablishment"></activity>
     </application>
 
 </manifest>

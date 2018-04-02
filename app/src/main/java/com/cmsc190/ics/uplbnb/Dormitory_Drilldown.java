@@ -1,5 +1,7 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -18,6 +21,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by Dell on 26 Feb 2018.
@@ -37,8 +43,10 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     public static TextView furnitureAvailable;
     public static TextView capacityPerUnit;
     public static RatingBar rating;
+    public static ImageButton editEstablishmentBtn;
     private DatabaseReference databaseReference;
     public static Dormitory_Item e;
+    public static FloatingActionButton openMap;
 
     @Nullable
     @Override
@@ -46,25 +54,52 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
 
 
         View view =  inflater.inflate(R.layout.fragment_establishment__drilldown_dormitory,container,false);
+        rating = (RatingBar)view.findViewById(R.id.drilldownDormitoryRating);
+        establishmentAddress = (TextView)view.findViewById(R.id.drilldownDormitoryAddress);
+        establishmentName = (TextView) view.findViewById(R.id.drilldownDormitoryName);
+        contactPerson = (TextView)view.findViewById(R.id.drilldownDormitoryContactPerson);
+        contactNumber2 =  view.findViewById(R.id.drilldownDormitoryContactNumber2);
+        contactNumber =  view.findViewById(R.id.drilldownDormitoryContactNumber1);
+        priceRange =  view.findViewById(R.id.drilldownDormitoryPriceRange);
+        security = view.findViewById(R.id.drilldownDormitorySecurity);
+        curfewHours = view.findViewById(R.id.drilldownDormitoryCurfewHours);
+        visitorsAllowed = view.findViewById(R.id.drilldownDormitoryVisitorsAllowed);
+        distanceFromCampus = view.findViewById(R.id.drilldownDormitoryDistanceFromCampus);
+        capacityPerUnit = view.findViewById(R.id.drilldownDormitoryCapacityPerUnit);
+        editEstablishmentBtn = (ImageButton)view.findViewById(R.id.editEstablishmentBtn);
+        editEstablishmentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editEstablishment();
+            }
+        });
+        openMap = (FloatingActionButton)view.findViewById(R.id.floatingActionButtonGetDirections);
+        openMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(),Map_Activity.class);
+                startActivity(i);
+            }
+        });
         //Establishment_Item e = (Establishment_Item) getArguments().getSerializable("e");
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
-        databaseReference.child(getArguments().getString("id2")).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child(getArguments().getString("id2")).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 e = dataSnapshot.getValue(Dormitory_Item.class);
-                rating = (RatingBar)getView().findViewById(R.id.drilldownDormitoryRating);
-                rating.setRating(e.getRating());
-                establishmentName = (TextView) getView().findViewById(R.id.drilldownDormitoryName);
+
+                rating.setRating(computeRating(e));
+
                 establishmentName.setText(e.getEstablishmentName());
-                establishmentAddress = (TextView)getView().findViewById(R.id.drilldownDormitoryAddress);
+
                 establishmentAddress.setText(e.getAddress());
-                contactPerson = (TextView)getView().findViewById(R.id.drilldownDormitoryContactPerson);
+
                 contactPerson.setText(e.getContactPerson());
-                contactNumber =  getView().findViewById(R.id.drilldownDormitoryContactNumber1);
+
                 contactNumber.setText(e.getContactNumber1() + "");
-                contactNumber2 =  getView().findViewById(R.id.drilldownDormitoryContactNumber2);
+
                 contactNumber2.setText(e.getContactNumber2()+"");
-                priceRange =  getView().findViewById(R.id.drilldownDormitoryPriceRange);
+
                 priceRange.setText(e.getPrice() + " PHP");
                 if(e.isRatePerHead() == true){
                     priceRange.append(" - per head");
@@ -77,25 +112,25 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                 }
 
 
-                curfewHours = getView().findViewById(R.id.drilldownDormitoryCurfewHours);
+
                 curfewHours.setText(e.getCurfewHours());
-                visitorsAllowed = getView().findViewById(R.id.drilldownDormitoryVisitorsAllowed);
+
                 //visitorsAllowed.setText("Visitors allowed? ");
                 if(e.isVisitorsAllowed() == true){
                     visitorsAllowed.setText("Yes");
                 }else {
                     visitorsAllowed.setText("No");
                 }
-                distanceFromCampus = getView().findViewById(R.id.drilldownDormitoryDistanceFromCampus);
+
                 distanceFromCampus.setText(e.getDistanceFromCampus() + "m");
-                security = getView().findViewById(R.id.drilldownDormitorySecurity);
+
                 if(e.isSecurity() == true){
                     security.setText("Security measures implemented");
                 }
                 else{
                     security.setText("No security measures implemented");
                 }
-                capacityPerUnit = getView().findViewById(R.id.drilldownDormitoryCapacityPerUnit);
+
                 capacityPerUnit.setText(e.getCapacityPerUnit() + " persons");
 
             }
@@ -113,7 +148,28 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
         return view;
     }
 
+    public float computeRating(Establishment_Item e){
+        e.getReviews();
+        float totalSum = 0f;
+        if(e.getReviews() != null){
+            int totalReview = e.getReviews().size();
+            Iterator entries = e.getReviews().entrySet().iterator();
+            while (entries.hasNext()){
+                HashMap.Entry entry = (HashMap.Entry) entries.next();
+                Review value = (Review)entry.getValue();
+                totalSum += value.getRating();
+            }
+            return totalSum/totalReview;
+        }
+        return totalSum;
+    }
 
+    public void editEstablishment(){
+        Intent i = new Intent(getActivity(),EditEstablishment.class);
+        i.putExtra("establishmentType",0);
+        i.putExtra("establishmentId",e.getId());
+        startActivity(i);
+    }
 
     @Override
     public void onClick(View view){

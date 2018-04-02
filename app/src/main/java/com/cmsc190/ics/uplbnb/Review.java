@@ -1,10 +1,12 @@
 package com.cmsc190.ics.uplbnb;
 
+import java.io.Serializable;
+
 /**
  * Created by Dell on 7 Mar 2018.
  */
 
-public class Review {
+public class Review implements Serializable{
     private String authorName;
     private String comment;
     private float rating;
