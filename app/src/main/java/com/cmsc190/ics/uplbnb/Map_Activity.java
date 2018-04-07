@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.content.Intent;
 import android.widget.Toast;
 
 import com.directions.route.AbstractRouting;
@@ -60,7 +61,7 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        setTitle("Some Place");
+        setTitle(getIntent().getStringExtra("address"));
         getLocationPermission();
         polylines = new ArrayList<>();
         points = new ArrayList<LatLng>();
@@ -163,28 +164,21 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private LatLng geoLocate() {
+        Intent intent = getIntent();
+        double addressLat = intent.getDoubleExtra("latitude",0.0);
+        double addressLong = intent.getDoubleExtra("longitude",0.0);
+        String search = intent.getStringExtra("address");; //change later with drilldown address
 
-        String search = "Dancel's Dormitory"; //change later with drilldown address
-        Geocoder geocoder = new Geocoder(Map_Activity.this);
-        List<Address> list = new ArrayList<>();
-        try {
-            list = geocoder.getFromLocationName(search, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (list.size() > 0) {
-            Address a = list.get(0);
 
             //getRouterMarker(new LatLng(a.getLatitude(),a.getLongitude()));
 
-            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(a.getLatitude(),a.getLongitude())).title(a.getAddressLine(0));
+            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(addressLat,addressLong)).title(search);
             gMap.addMarker(markerOptions);
 
             //moveCamera(new LatLng(a.getLatitude(), a.getLongitude()), DEFAULT_ZOOM, a.getAddressLine(0));
-            return new LatLng(a.getLatitude(),a.getLongitude());
-        }
-        return null;
+            return new LatLng(addressLat,addressLong);
+
+
     }
 
 
@@ -206,9 +200,9 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void getRouterMarker(LatLng ll) {
         Routing routing = new Routing.Builder()
-                .travelMode(AbstractRouting.TravelMode.DRIVING)
+                .travelMode(AbstractRouting.TravelMode.WALKING)
                 .withListener(this)
-                .alternativeRoutes(true)
+                .alternativeRoutes(false)
                 .waypoints(new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude()), ll)
                 .build();
         routing.execute();

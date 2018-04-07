@@ -113,7 +113,7 @@
                     android:id="@+id/editEstablishmentBtn"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginRight="40dp"
+                    android:layout_marginRight="60dp"
                     android:layout_marginTop="10dp"
                     android:src="@drawable/pencil_48px"
                     android:background="#fff"

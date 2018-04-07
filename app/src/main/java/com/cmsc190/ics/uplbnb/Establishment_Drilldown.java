@@ -39,6 +39,19 @@ public class Establishment_Drilldown extends AppCompatActivity {
     private ViewPager mViewPager;
 
     @Override
+    public void onBackPressed() {
+
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+            //additional code
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_establishment__drilldown);
@@ -181,5 +194,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
             // Show 3 total pages.
             return 3;
         }
+
+
     }
 }

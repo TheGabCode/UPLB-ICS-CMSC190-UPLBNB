@@ -1,17 +1,24 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -31,8 +38,12 @@ import android.content.Intent;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -56,8 +67,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.UUID;
 
-public class EditEstablishment extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    Spinner establishmentTypeSpinner;
+public class EditEstablishment extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, ConfirmDeleteDialogFragment.NoticeDialogListener {
+    String TAG = "Log";
+    double UPLB_GATE_LAT = 14.1675928;
+    double UPLB_GATE_LONG = 121.24345819999999;
+    PlaceInfo mPlace;
     Spinner securitySpinner;
     Spinner concealContactPersonSpinner;
     Spinner concealPriceSpinner;
@@ -100,6 +114,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
     ArrayList<Uri> uriList;
     User user;
     Intent intent;
+    ActionBar actionBar;
     public static Establishment_Item e;
     private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
@@ -160,21 +175,21 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         if(filePath != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
+          /*  progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            StorageReference ref = storageReference.child("establishments/"+ establishmentId+"/"+filePath.getLastPathSegment());
+          */  StorageReference ref = storageReference.child("establishments/"+ establishmentId);
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
+            //                progressDialog.dismiss();
                             Toast.makeText(EditEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
+              //              progressDialog.dismiss();
                             Toast.makeText(EditEstablishment.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -183,7 +198,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                //            progressDialog.setMessage("Uploaded "+(int)progress+"%");
                         }
                     });
 
@@ -201,6 +216,10 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         String contactPerson = user.getId();
         String contactNumber = user.getNumber();
         String address = addEstablishmentAddressAutocomplete.getText().toString().trim();
+        double latitude = mPlace.getLatitude();
+        double longitude = mPlace.getLongitude();
+        float[] distanceFromCampus = new float[1];
+        Location.distanceBetween(latitude,longitude,UPLB_GATE_LAT,UPLB_GATE_LONG,distanceFromCampus);
         String price;
         String curfewHours = startCurfewHours.getText().toString().trim() + "-" + endCurfewHours.getText().toString().trim();
         boolean security;
@@ -311,25 +330,67 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
         String id = intent.getStringExtra("establishmentId");
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, 100, security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,e.getReviews());
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,e.getReviews(),latitude,longitude,mPlace);
             databaseReference.child(id).setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, 100, security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,e.getReviews());
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,e.getReviews(),latitude,longitude,mPlace);
             databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
         finish();
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.delete, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.deleteEstablishment:
+                confirmDelete();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+        deleteEstablishment();
+/*        Toast.makeText(getApplicationContext(),"Delete",Toast.LENGTH_SHORT);*/
+        dialog.dismiss();
+        finish();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+        dialog.dismiss();
+
+    }
+    public void confirmDelete(){
+        DialogFragment deleteFragment = new ConfirmDeleteDialogFragment();
+        deleteFragment.show(getFragmentManager(),"delete");
+    }
+
+    public void deleteEstablishment(){
+        databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
+        databaseReference.child(e.getId()).removeValue();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         intent = getIntent();
         initUser();
         super.onCreate(savedInstanceState);
+        actionBar = getActionBar();
         setContentView(R.layout.activity_edit_establishment);
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
@@ -391,6 +452,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         addEstablishmentAddressAutocomplete = (AutoCompleteTextView)findViewById(R.id.editEstablishmentAddress);
         placeAutocompleteAdapter = new PlaceAutocompleteAdapter(this,mGoogleApiClient,LAT_LNG_BOUNDS,null);
         addEstablishmentAddressAutocomplete.setAdapter(placeAutocompleteAdapter);
+        addEstablishmentAddressAutocomplete.setOnItemClickListener(mAutocompleteClickListener);
 /*        establishmentTypeSpinner = (Spinner) findViewById(R.id.establishmentTypeSpinner);
         establishmentTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -456,13 +518,22 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("WTF","Hey");
+
                 if(eType == 1){
 
                     e = dataSnapshot.getValue(Apartment_Item.class);
+                    if(e == null){
+                        finish();
+                        return;
+                    }
                     setupEstablishmentInputFields(e);
                 }
                 else if(eType == 0){
                     e = dataSnapshot.getValue(Dormitory_Item.class);
+                    if(e == null){
+                        finish();
+                        return;
+                    }
                     setupEstablishmentInputFields(e);
                 }else{
 
@@ -479,7 +550,8 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
     }
 
     public void setupEstablishmentInputFields(Establishment_Item item){
-
+        StorageReference previewRef = storageReference.child("establishments/"+item.getId());
+        mPlace = item.getPlaceInfo();
        // Log.d("Stuff1",e.getEstablishmentName());
         establishmentName.setText(item.getEstablishmentName());
         addEstablishmentAddressAutocomplete.setText(item.getAddress());
@@ -612,6 +684,57 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
     public  void deleteFurniture(View v){
         dormFurnitureContainer.removeView((View)v.getParent());
     }
+
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            final AutocompletePrediction item = placeAutocompleteAdapter.getItem(i);
+            final String placeId = item.getPlaceId();
+
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+        }
+    };
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+            if(!places.getStatus().isSuccess()){
+                Log.d(TAG, "onResult: Place query did not complete successfully: " + places.getStatus().toString());
+                places.release();
+                return;
+            }
+            final Place place = places.get(0);
+
+            try{
+                mPlace = new PlaceInfo();
+                mPlace.setName(place.getName().toString());
+                Log.d("Wee","Nostradamus");
+                Log.d(TAG, "onResult: name: " + place.getName());
+                mPlace.setAddress(place.getAddress().toString());
+                Log.d(TAG, "onResult: address: " + place.getAddress());
+//                mPlace.setAttributions(place.getAttributions().toString());
+//                Log.d(TAG, "onResult: attributions: " + place.getAttributions());
+                mPlace.setId(place.getId());
+                Log.d(TAG, "onResult: id:" + place.getId());
+                mPlace.setLatitude(place.getLatLng().latitude);
+                mPlace.setLongitude(place.getLatLng().longitude);
+                Log.d(TAG, "onResult: latlng: " + place.getLatLng());
+                mPlace.setRating(place.getRating());
+                Log.d(TAG, "onResult: rating: " + place.getRating());
+                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                Log.d(TAG, "onResult: phone number: " + place.getPhoneNumber());
+
+                Log.d(TAG, "onResult: place: " + mPlace.toString());
+            }catch (NullPointerException e){
+                Log.e(TAG, "onResult: NullPointerException: " + e.getMessage() );
+            }
+
+
+            places.release();
+        }
+    };
 
 
 }

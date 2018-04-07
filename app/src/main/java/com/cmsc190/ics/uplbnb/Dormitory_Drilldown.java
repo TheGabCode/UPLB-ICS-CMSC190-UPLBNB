@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,6 +49,48 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     private DatabaseReference databaseReference;
     public static Dormitory_Item e;
     public static FloatingActionButton openMap;
+    FirebaseUser firebaseUser;
+    DatabaseReference userRef;
+    User user;
+    FirebaseDatabase firebaseDatabase;
+
+    public void initUser(){
+        userRef = firebaseDatabase.getInstance().getReference();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = firebaseUser.getUid();
+        Log.d("User id","User id " + userId);
+        userRef.child("user").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                if(firebaseUser == null){
+                    editEstablishmentBtn.setVisibility(View.GONE);
+                }else{
+                    if(user != null){
+                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                            editEstablishmentBtn.setVisibility(View.GONE);
+                        }
+                        else if(user.getId().equals(e.getOwner_id())){
+                            editEstablishmentBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else{
+                        Log.d("User id",firebaseUser.getUid());
+                    }
+
+                }
+                Log.d("User id","XXX" + user.getFullname());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
 
     @Nullable
     @Override
@@ -78,6 +122,9 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(),Map_Activity.class);
+                i.putExtra("address",establishmentName.getText().toString().trim());
+                i.putExtra("latitude",e.getLatitude());
+                i.putExtra("longitude",e.getLongitude());
                 startActivity(i);
             }
         });
@@ -87,7 +134,10 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 e = dataSnapshot.getValue(Dormitory_Item.class);
-
+                if(e == null){
+                    getActivity().getFragmentManager().popBackStack();
+                    return;
+                }
                 rating.setRating(computeRating(e));
 
                 establishmentName.setText(e.getEstablishmentName());
@@ -132,6 +182,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                 }
 
                 capacityPerUnit.setText(e.getCapacityPerUnit() + " persons");
+                initUser();
 
             }
 

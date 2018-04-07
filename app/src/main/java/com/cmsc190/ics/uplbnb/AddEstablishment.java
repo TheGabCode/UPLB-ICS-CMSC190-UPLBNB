@@ -3,6 +3,7 @@ package com.cmsc190.ics.uplbnb;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -10,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,8 +32,12 @@ import android.content.Intent;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -55,6 +61,9 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class AddEstablishment extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    String TAG = "Log";
+    double UPLB_GATE_LAT = 14.1675928;
+    double UPLB_GATE_LONG = 121.24345819999999;
     Spinner establishmentTypeSpinner;
     Spinner securitySpinner;
     Spinner concealContactPersonSpinner;
@@ -97,6 +106,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
     FirebaseUser firebaseUser;
     ArrayList<Uri> uriList;
     User user;
+    PlaceInfo mPlace;
     private PlaceAutocompleteAdapter placeAutocompleteAdapter;
     private GoogleApiClient mGoogleApiClient;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(new LatLng(14.136028, 121.200107),new LatLng(14.175857, 121.265629)); //Rougly los banos bounds
@@ -157,20 +167,21 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-            StorageReference ref = storageReference.child("establishments/"+ establishmentId+"/"+filePath.getLastPathSegment());
+//            progressDialog.show();
+            StorageReference ref = storageReference.child("establishments/"+establishmentId);
+
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
+//                            progressDialog.dismiss();
                             Toast.makeText(AddEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
+    //                        progressDialog.dismiss();
                             Toast.makeText(AddEstablishment.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -179,7 +190,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+  //                          progressDialog.setMessage("Uploaded "+(int)progress+"%");
                         }
                     });
 
@@ -197,6 +208,11 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         String contactPerson = user.getId();
         String contactNumber = user.getNumber();
         String address = addEstablishmentAddressAutocomplete.getText().toString().trim();
+        double latitude,longitude;
+        latitude = mPlace.getLatitude();
+        longitude = mPlace.getLongitude();
+        float[] distanceFromCampus = new float[1];
+        Location.distanceBetween(latitude,longitude,UPLB_GATE_LAT,UPLB_GATE_LONG,distanceFromCampus);
         String price;
         String curfewHours = startCurfewHours.getText().toString().trim() + "-" + endCurfewHours.getText().toString().trim();
         boolean security;
@@ -308,11 +324,11 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").push();
         String id = databaseReference.getKey();
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, 100, security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,reviews);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,reviews, latitude,longitude,mPlace);
             databaseReference.setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, 100, security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,reviews);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,reviews,latitude,longitude,mPlace);
             databaseReference.setValue(newEstablishment);
         }
         saveImage(id);
@@ -396,6 +412,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
                 .enableAutoManage(this, this)
                 .build();
         addEstablishmentAddressAutocomplete = (AutoCompleteTextView)findViewById(R.id.addEstablishmentAddress);
+        addEstablishmentAddressAutocomplete.setOnItemClickListener(mAutocompleteClickListener);
         placeAutocompleteAdapter = new PlaceAutocompleteAdapter(this,mGoogleApiClient,LAT_LNG_BOUNDS,null);
         addEstablishmentAddressAutocomplete.setAdapter(placeAutocompleteAdapter);
         establishmentTypeSpinner = (Spinner) findViewById(R.id.establishmentTypeSpinner);
@@ -460,6 +477,61 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
     public  void deleteFurniture(View v){
         dormFurnitureContainer.removeView((View)v.getParent());
     }
+
+
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            final AutocompletePrediction item = placeAutocompleteAdapter.getItem(i);
+            final String placeId = item.getPlaceId();
+
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+        }
+    };
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+            if(!places.getStatus().isSuccess()){
+                Log.d(TAG, "onResult: Place query did not complete successfully: " + places.getStatus().toString());
+                places.release();
+                return;
+            }
+            final Place place = places.get(0);
+
+            try{
+                mPlace = new PlaceInfo();
+                mPlace.setName(place.getName().toString());
+                Log.d("Wee","Nostradamus");
+                Log.d(TAG, "onResult: name: " + place.getName());
+                mPlace.setAddress(place.getAddress().toString());
+                Log.d(TAG, "onResult: address: " + place.getAddress());
+//                mPlace.setAttributions(place.getAttributions().toString());
+//                Log.d(TAG, "onResult: attributions: " + place.getAttributions());
+                mPlace.setId(place.getId());
+
+                Log.d(TAG, "onResult: id:" + place.getId());
+
+                mPlace.setLatitude(place.getLatLng().latitude);
+                Log.d(TAG, "onResult: latitude:" + place.getLatLng().latitude);
+                mPlace.setLongitude(place.getLatLng().longitude);
+                Log.d(TAG, "onResult: longitude:" + place.getLatLng().longitude);
+                mPlace.setRating(place.getRating());
+                Log.d(TAG, "onResult: rating: " + place.getRating());
+                mPlace.setPhoneNumber(place.getPhoneNumber().toString());
+                Log.d(TAG, "onResult: phone number: " + place.getPhoneNumber());
+
+                Log.d(TAG, "onResult: place: " + mPlace.toString());
+            }catch (NullPointerException e){
+                Log.e(TAG, "onResult: NullPointerException: " + e.getMessage() );
+            }
+
+
+            places.release();
+        }
+    };
 
 
 }

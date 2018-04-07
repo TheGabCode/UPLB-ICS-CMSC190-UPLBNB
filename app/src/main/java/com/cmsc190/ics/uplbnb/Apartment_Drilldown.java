@@ -1,10 +1,12 @@
 package com.cmsc190.ics.uplbnb;
 
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,10 @@ import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.content.Intent;
+import android.widget.Toast;
+
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,7 +50,54 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
     public static ImageButton editEstablishmentBtn;
     private DatabaseReference databaseReference;
     public static Apartment_Item e;
+    double addressLat;
+    double addressLong;
     public static FloatingActionButton openMap;
+    FirebaseUser firebaseUser;
+    User user;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference userRef;
+
+
+    public void initUser(){
+        userRef = firebaseDatabase.getInstance().getReference();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = firebaseUser.getUid();
+        Log.d("User id","User id " + userId);
+        userRef.child("user").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                if(firebaseUser == null){
+                    editEstablishmentBtn.setVisibility(View.GONE);
+                }else{
+                    if(user != null){
+                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                            editEstablishmentBtn.setVisibility(View.GONE);
+                        }
+                        else if(user.getId().equals(e.getOwner_id())){
+                            editEstablishmentBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else{
+                        Log.d("User id",firebaseUser.getUid());
+                    }
+
+                }
+                Log.d("User id","XXX" + user.getFullname());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +112,7 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
                 editEstablishment();
             }
         });
+        editEstablishmentBtn.setVisibility(View.GONE);
         rating = (RatingBar)view.findViewById(R.id.drilldownApartmentRating);
         establishmentName = (TextView) view.findViewById(R.id.drilldownApartmentName);
         establishmentAddress = (TextView)view.findViewById(R.id.drilldownAparmentAddress);
@@ -78,62 +131,78 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getActivity(),Map_Activity.class);
+                i.putExtra("address",establishmentName.getText().toString().trim());
+                i.putExtra("latitude",addressLat);
+                i.putExtra("longitude",addressLong);
                 startActivity(i);
             }
         });
+        Toast.makeText(getContext(),getArguments().getString("id"),Toast.LENGTH_LONG);
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
         databaseReference.child(getArguments().getString("id")).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 e = dataSnapshot.getValue(Apartment_Item.class);
+                if(e == null){
+                    getActivity().finish();
 
-                rating.setRating(computeRating(e));
+//                    Toast.makeText(getActivity(),"null",Toast.LENGTH_LONG).show();
 
-                establishmentName.setText(e.getEstablishmentName());
-                establishmentAddress.setText(e.getAddress());
-
-                contactPerson.setText(e.getContactPerson());
-
-                contactNumber.setText(e.getContactNumber1() + "");
-
-                contactNumber2.setText(e.getContactNumber2()+"");
-
-                priceRange.setText(e.getPrice() + " PHP");
-                if(e.isBillsIncludedInRate() == true){
-                    priceRange.append(",bills included");
                 }
-                else{
-                    priceRange.append(",bills not included");
+                if(e != null){
+                    addressLat = e.getLatitude();
+                    addressLong = e.getLongitude();
+                    rating.setRating(computeRating(e));
+
+                    establishmentName.setText(e.getEstablishmentName());
+                    establishmentAddress.setText(e.getAddress());
+
+                    contactPerson.setText(e.getContactPerson());
+
+                    contactNumber.setText(e.getContactNumber1() + "");
+
+                    contactNumber2.setText(e.getContactNumber2()+"");
+
+                    priceRange.setText(e.getPrice() + " PHP");
+                    if(e.isBillsIncludedInRate() == true){
+                        priceRange.append(",bills included");
+                    }
+                    else{
+                        priceRange.append(",bills not included");
+                    }
+
+                    curfewHours.setText(e.getCurfewHours());
+
+                    if(e.isVisitorsAllowed() == true){
+                        visitorsAllowed.setText("Yes");
+                    }else {
+                        visitorsAllowed.setText("No");
+                    }
+
+                    distanceFromCampus.setText(e.getDistanceFromCampus() + "m");
+
+                    if(e.isSecurity() == true){
+                        security.setText("Security measures implemented");
+                    }
+                    else{
+                        security.setText("No security measures implemented");
+                    }
+
+                    rentYears.setText(e.getRentYears()+" ");
+
+
+
+                    if(e.isFurnished() == true){
+                        condition.setText("Furnished");
+                    }
+                    else
+                    {
+                        condition.setText("Unfurnished");
+                    }
+                    initUser();
+
                 }
 
-                curfewHours.setText(e.getCurfewHours());
-
-                if(e.isVisitorsAllowed() == true){
-                    visitorsAllowed.setText("Yes");
-                }else {
-                    visitorsAllowed.setText("No");
-                }
-
-                distanceFromCampus.setText(e.getDistanceFromCampus() + "m");
-
-                if(e.isSecurity() == true){
-                    security.setText("Security measures implemented");
-                }
-                else{
-                    security.setText("No security measures implemented");
-                }
-
-                rentYears.setText(e.getRentYears()+" ");
-
-
-
-                if(e.isFurnished() == true){
-                    condition.setText("Furnished");
-                }
-                else
-                {
-                    condition.setText("Unfurnished");
-                }
             }
 
             @Override
@@ -144,10 +213,18 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
 
 
 
+
+
 //      rentYears.setText("Contract Years: " + ((Apartment_Item)e).getRentYears());
+
 
         return view;
     }
+
+
+
+
+
 
 
     public void editEstablishment(){

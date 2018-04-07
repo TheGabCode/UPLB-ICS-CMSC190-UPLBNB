@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.location.places.Place;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,7 +27,7 @@ public class Establishment_Item implements Serializable{
     private boolean visitorsAllowed;
     private int establishmentType; //if 1-apartment 0-dormitory
     private boolean billsIncludedInRate;
-    private int distanceFromCampus;
+    private float distanceFromCampus;
     private boolean security;
     private HashMap<String,Unit_Item> unit;
     public HashMap<String,Review> review;
@@ -36,8 +38,10 @@ public class Establishment_Item implements Serializable{
     private String owner_id;
     private float rating;
     private String id;
-
-    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, int distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> reviews) {
+    private double latitude;
+    private double longitude;
+    private PlaceInfo placeInfo;
+    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> reviews, double latitude, double longitude, PlaceInfo placeInfo) {
         this.owner_id = owner_Id;
         this.establishmentName = establishmentName;
         this.contactPerson = contactPerson;
@@ -59,6 +63,9 @@ public class Establishment_Item implements Serializable{
         this.concealAvailableUnits = concealAvailableUnits;
         this.unit = new HashMap<String, Unit_Item>();
         this.review = reviews;;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.placeInfo = placeInfo;
     }
 
     public String getEstablishmentName() {
@@ -72,6 +79,9 @@ public class Establishment_Item implements Serializable{
     public float getRating(){ return rating; }
 
 
+    public PlaceInfo getPlaceInfo(){
+        return placeInfo;
+    }
 
     public HashMap<String,Review> getReviews(){
         return review;
@@ -112,7 +122,7 @@ public class Establishment_Item implements Serializable{
         return billsIncludedInRate;
     }
 
-    public int getDistanceFromCampus() {
+    public float getDistanceFromCampus() {
         return distanceFromCampus;
     }
 
@@ -144,6 +154,12 @@ public class Establishment_Item implements Serializable{
     public Establishment_Item() {
     }
 
+    public double getLatitude(){
+        return latitude;
+    }
+    public double getLongitude(){
+        return longitude;
+    }
 
 }
 
