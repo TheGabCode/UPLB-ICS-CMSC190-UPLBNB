@@ -26,4 +26,9 @@
         <item>Furnished</item>
         <item>Unfurnished</item>
     </string-array>
+    <string-array name="open_closed">
+        <item>Open</item>
+        <item>Closed</item>
+    </string-array>
+
 </resources>

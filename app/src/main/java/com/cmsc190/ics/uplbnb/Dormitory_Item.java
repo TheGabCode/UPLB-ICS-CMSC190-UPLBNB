@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class Dormitory_Item extends Establishment_Item implements Serializable{
-    private HashMap<String, Integer> availableFurniture; //for dormitories String/Key is the item, Integer/Value is the quantity
+    public HashMap<String, Integer> availableFurniture; //for dormitories String/Key is the item, Integer/Value is the quantity
     private boolean ratePerHead; //for dormitories, if true then rate is per head e.g 600/person
     private int capacityPerUnit;
 
@@ -20,8 +20,8 @@ public class Dormitory_Item extends Establishment_Item implements Serializable{
     }
 
 
-    public Dormitory_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits,  boolean ratePerHead, int capacityPerUnit, float rating,String id,String owner_id, HashMap<String,Integer> newFurniture, HashMap<String, Review> reviews, double latitude, double longitude,PlaceInfo placeInfo) {
-        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security,concealContactPerson, concealPrice, concealAvailableUnits,rating,id,owner_id,reviews,latitude,longitude,placeInfo);
+    public Dormitory_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits,  boolean ratePerHead, int capacityPerUnit, float rating,String id,String owner_id, HashMap<String,Integer> newFurniture, HashMap<String, Review> review, double latitude, double longitude,PlaceInfo placeInfo, HashMap<String, Unit_Item> unit) {
+        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security,concealContactPerson, concealPrice, concealAvailableUnits,rating,id,owner_id,review,latitude,longitude,placeInfo,unit);
         this.availableFurniture = newFurniture;
         this.ratePerHead = ratePerHead;
         this.capacityPerUnit = capacityPerUnit;

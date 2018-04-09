@@ -298,7 +298,9 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
             intCapacityPerUnit = Integer.parseInt(capacityPerUnitDorm.getText().toString().trim());
         }
         HashMap<String,Integer> furniture = new HashMap<String, Integer>();
-        HashMap<String, Review> reviews = new HashMap<String, Review>();
+        HashMap<String, Review> review = new HashMap<String, Review>();
+        HashMap<String,Unit_Item> unit = new HashMap<String, Unit_Item>();
+
         if(establishmentType == 0){
             for(int i = 1; i < dormFurnitureContainer.getChildCount() - 1; i++){
                 View v = dormFurnitureContainer.getChildAt(i);
@@ -321,14 +323,15 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
 
             }
         }
+
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").push();
         String id = databaseReference.getKey();
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,reviews, latitude,longitude,mPlace);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,review, latitude,longitude,mPlace,unit);
             databaseReference.setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,reviews,latitude,longitude,mPlace);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,review,latitude,longitude,mPlace,unit);
             databaseReference.setValue(newEstablishment);
         }
         saveImage(id);

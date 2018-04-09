@@ -8,21 +8,21 @@ import java.util.HashMap;
  */
 
 public class Unit_Item implements Serializable{
-    private Long unitIdentifier;
+    private String unitIdentifier;
     private int condition; //for apartments
     private int status; //1-open 0-closed
     private int slotsAvailable; //for dormitories //-1 for Apartments
     private int capacity; //for dorms
-    private int rate; //for apartments if not fixed
+    private double rate; //for apartments if not fixed
     private boolean ratePerHead; //for dormitories
     private String id;
-    private HashMap<String,Integer> furniture; //for dormitories
+    public HashMap<String,Integer> furniture; //for dormitories
 
     public Unit_Item(){
 
     }
 
-    public Unit_Item(Long unitIdentifier, int status, int slotsAvailable, int rate, String id, int condition, HashMap<String,Integer> furniture,boolean ratePerHead, int capacity) {
+    public Unit_Item(String unitIdentifier, int status, int slotsAvailable, double rate, String id, int condition, HashMap<String,Integer> furniture,boolean ratePerHead, int capacity) {
         this.unitIdentifier = unitIdentifier;
         this.status = status;
         this.slotsAvailable = slotsAvailable;
@@ -34,7 +34,7 @@ public class Unit_Item implements Serializable{
         this.capacity = capacity;
     }
 
-    public Long getUnitIdentifier() {
+    public String getUnitIdentifier() {
         return unitIdentifier;
     }
 
@@ -53,7 +53,7 @@ public class Unit_Item implements Serializable{
         return slotsAvailable;
     }
 
-    public int getRate() {
+    public double getRate() {
         return rate;
     }
 

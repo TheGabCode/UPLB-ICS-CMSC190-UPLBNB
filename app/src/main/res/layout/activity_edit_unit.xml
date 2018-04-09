@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.cmsc190.ics.uplbnb.EditUnit">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="44dp"
+        tools:layout_editor_absoluteY="0dp">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:id="@+id/addUnitUploadImageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/background_with_shadow"
+                android:layout_marginBottom="5dp">
+
+                <LinearLayout
+                    android:id="@+id/addEstablishmentImagePreviewLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/addUnitUploadPhotoPreview"
+                        android:layout_gravity="center"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/picture_placeholder_96px" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/addUnitUploadImageOptions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/addUnitUploadImageBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Upload image"
+                        />
+                    <!--                    <Button
+                                            android:id="@+id/addEstablishmentSaveImageBtn"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="Save image"/>-->
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/addUnitIdentifierLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_weight="0.5"
+                    app:srcCompat="@drawable/help_48px" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#fff"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:id="@+id/addUnitIdentifierLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Unit Identifier" />
+
+                    <EditText
+                        android:id="@+id/addUnitIdentifier"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:ems="10"
+                        android:inputType="textPersonName" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:id="@+id/addUnitRateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp">
+
+                <ImageView
+                    android:id="@+id/addUnitRateIcon"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_weight="0.5"
+                    app:srcCompat="@drawable/price_48px" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="#fff"
+                    android:orientation="vertical"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:id="@+id/addEstablishmentPriceLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Rate" />
+
+                    <LinearLayout
+                        android:id="@+id/addUnitPriceDormitoryLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/addUnitPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginRight="30dp"
+                            android:ems="10"
+                            android:inputType="numberDecimal" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/addUnitDormCapacityContainer">
+                <LinearLayout
+                    android:id="@+id/addUnitDormitoryCapacityLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#fff"
+                    android:orientation="horizontal"
+                    android:paddingLeft="20dp">
+
+                    <ImageView
+                        android:id="@+id/addUnitDormCapacityIcon"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_weight="0.5"
+                        app:srcCompat="@drawable/capacity_48px" />
+                    <LinearLayout
+                        android:background="#fff"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="15dp"
+                        android:paddingTop="15dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/addUnitDormCapacityLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Capacity" />
+
+                        <EditText
+                            android:id="@+id/addUnitCapacity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="30dp"
+                            android:ems="10"
+                            android:inputType="number" />
+                    </LinearLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/addUnitDormitoryAvailableSlotsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#fff"
+                    android:orientation="horizontal"
+                    android:paddingLeft="20dp">
+
+                    <ImageView
+                        android:id="@+id/addUnitDormitoryAvailableSlotsIcon"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_weight="0.5"
+                        app:srcCompat="@drawable/add_user_male_48px" />
+                    <LinearLayout
+                        android:background="#fff"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="15dp"
+                        android:paddingTop="15dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/addUnitDormitoryAvailableSlotsLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Available Slots" />
+
+                        <EditText
+                            android:id="@+id/addUnitDormitoryAvailableSlots"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="30dp"
+                            android:ems="10"
+                            android:inputType="number" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/addUnitApartmentPart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/addUnitApartmentStatusLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#fff"
+                    android:orientation="horizontal"
+                    android:paddingLeft="20dp">
+
+                    <ImageView
+                        android:id="@+id/addUnitApartmentStatusIcon"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_weight="0.5"
+                        app:srcCompat="@drawable/door_48px" />
+
+                    <LinearLayout
+                        android:background="#fff"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="15dp"
+                        android:paddingTop="15dp"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:id="@+id/addUnitApartmentStatusLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="5dp"
+                            android:text="Status" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+                            <Spinner
+                                android:id="@+id/apartmentStatusSpinner"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:entries="@array/open_closed" />
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/addUnitApartmentConditionLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#fff"
+                    android:orientation="horizontal"
+                    android:paddingLeft="20dp">
+
+                    <ImageView
+                        android:id="@+id/addUnitFurnishedIcon"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_weight="0.5"
+                        app:srcCompat="@drawable/furnished_48px" />
+                    <LinearLayout
+                        android:background="#fff"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="15dp"
+                        android:paddingTop="15dp"
+                        android:layout_weight="1"
+                        >
+
+                        <TextView
+                            android:id="@+id/addUnitConditionLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="5dp"
+                            android:text="Condition" />
+
+                        <Spinner
+                            android:id="@+id/conditionSpinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:entries="@array/furnished_notfurnished" />
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp"
+                android:id="@+id/addUnitDormitoryFurnitureLayout">
+
+                <ImageView
+                    android:id="@+id/addUnitDormFurnitureIcon"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_weight="0.5"
+                    app:srcCompat="@drawable/furnished_48px" />
+                <LinearLayout
+                    android:background="#fff"
+                    android:id="@+id/addUnitFurnitureContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp">
+
+                    <TextView
+                        android:id="@+id/addUnitFurnitureLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:text="Furniture, Appliances, Rooms, Misc." />
+
+
+                    <!--                    <LinearLayout
+                                            android:id="@+id/dormitoryFurnitureLayout"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+
+                                            android:orientation="horizontal">
+
+                                            <EditText
+                                                android:id="@+id/dormitoryFurnitureQty"
+                                                android:layout_width="100dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginRight="20dp"
+                                                android:layout_weight="0"
+                                                android:ems="10"
+                                                android:hint="Quantity"
+                                                android:inputType="number" />
+
+                                            <EditText
+                                                android:id="@+id/dormitoryFurnitureItem"
+                                                android:layout_width="100dp"
+                                                android:layout_height="wrap_content"
+                                                android:layout_weight="0"
+                                                android:ems="10"
+                                                android:hint="Item"
+                                                android:inputType="textPersonName" />
+
+                                            <ImageButton
+                                                android:id="@+id/removeFurnitureBtn"
+
+                                                android:layout_width="50dp"
+                                                android:layout_height="50dp"
+                                                android:layout_weight="0"
+                                                android:background="@android:color/transparent"
+                                                app:srcCompat="@drawable/delete_24px"
+                                                android:onClick="deleteFurniture"/>
+                                        </LinearLayout>-->
+
+                    <Button
+                        android:id="@+id/addFurnitureBtn"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="70dp"
+                        android:layout_weight="1"
+                        android:onClick="addFurniture"
+                        android:text="Add Item" />
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:background="@drawable/background_with_shadow"
+                android:id="@+id/addUnitSubmitButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="0dp"
+                android:paddingTop="0dp">
+
+                <Button
+                    android:id="@+id/addUnitSubmitButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SUBMIT" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

@@ -20,16 +20,19 @@ import java.util.List;
 
 public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.ViewHolder> {
 
-    public Unit_Item_Adapter(List<Unit_Item> unit_items, Context context, String number) {
+    public Unit_Item_Adapter(List<Unit_Item> unit_items, Context context, String number,int establishmentType,String establishmentId) {
         this.unit_items = unit_items;
         this.context = context;
         this.establishmentContactNumber1 = number;
+        this.establishmentType = establishmentType;
+        this.establishmentId = establishmentId;
     }
-
     List<Unit_Item> unit_items;
     Context context;
     String establishmentContactNumber1;
+    int establishmentType;
     String establishmentContactNumber2;
+    String establishmentId;
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -71,7 +74,9 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
                 Context context = view.getContext();
                 i = new Intent(context,ApartmentUnitDrilldown.class);
                 i.putExtra("unit",unit);
+                i.putExtra("establishmentType",establishmentType);
                 i.putExtra("establishmentContactNumber",establishmentContactNumber1);
+                i.putExtra("establishmentId",establishmentId);
                 context.startActivity(i);//                Toast.makeText(context, "Clicked " + establishment.getEstablishmentName(), Toast.LENGTH_SHORT).show();
 //               Intent i = new Intent(context,Establishment_Drilldown.class);
 //                i.putExtra("establishment",establishment);

@@ -144,10 +144,9 @@ public class Establishment_Drilldown extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Establishment_Item e = (Establishment_Item)i.getSerializableExtra("establishment");
+            Establishment_Item e = (Establishment_Item)i.getSerializableExtra("establishment");;
             switch(position){
                 case 0: //overview
-
                     if(e.getEstablishmentType() == 1){
                         Toast.makeText(getApplicationContext(),e.getEstablishmentName(),Toast.LENGTH_SHORT);
                         Apartment_Drilldown a1 = new Apartment_Drilldown();
@@ -155,8 +154,6 @@ public class Establishment_Drilldown extends AppCompatActivity {
                         args.putString("id",e.getId());
                         a1.setArguments(args);
                         return a1;
-
-
                     }
                     else if(e.getEstablishmentType() == 0){
                         Dormitory_Drilldown d1 = new Dormitory_Drilldown();
@@ -172,6 +169,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     Units_List u1 = new Units_List();
                     Bundle args3 = new Bundle();
                     args3.putString("establishmentId",e.getId());
+                    args3.putInt("establishmentType",e.getEstablishmentType());
                     args3.putString("establishmentContact",e.getContactNumber1());
                     u1.setArguments(args3);
                     return u1;

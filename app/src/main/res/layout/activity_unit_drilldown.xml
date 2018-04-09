@@ -17,6 +17,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:background="#fff"
+                >
+                <TextView
+                    android:id="@+id/apartmentUnitDrilldownIdentifier"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#fff"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="20dp"
+                    android:paddingTop="20dp"
+                    android:text="Unit Name"
+                    android:layout_weight="1"/>
+                <ImageButton
+                    android:id="@+id/unitDrilldownEditBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:paddingRight="30dp"
+                    android:src="@drawable/pencil_48px"
+                    android:layout_weight="0"
+                    android:background="#fff"/>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/apartmentUnitDrilldownRate"

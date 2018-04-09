@@ -29,7 +29,7 @@ public class Establishment_Item implements Serializable{
     private boolean billsIncludedInRate;
     private float distanceFromCampus;
     private boolean security;
-    private HashMap<String,Unit_Item> unit;
+    public HashMap<String,Unit_Item> unit;
     public HashMap<String,Review> review;
     //private List<Unit_Item> units;
     private boolean concealContactPerson;
@@ -41,7 +41,7 @@ public class Establishment_Item implements Serializable{
     private double latitude;
     private double longitude;
     private PlaceInfo placeInfo;
-    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> reviews, double latitude, double longitude, PlaceInfo placeInfo) {
+    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit ) {
         this.owner_id = owner_Id;
         this.establishmentName = establishmentName;
         this.contactPerson = contactPerson;
@@ -61,8 +61,8 @@ public class Establishment_Item implements Serializable{
         this.concealContactPerson = concealContactPerson;
         this.concealPrice = concealPrice;
         this.concealAvailableUnits = concealAvailableUnits;
-        this.unit = new HashMap<String, Unit_Item>();
-        this.review = reviews;;
+        this.unit = unit;
+        this.review = review;
         this.latitude = latitude;
         this.longitude = longitude;
         this.placeInfo = placeInfo;
@@ -146,6 +146,10 @@ public class Establishment_Item implements Serializable{
         return concealAvailableUnits;
     }
 
+
+    public HashMap<String, Unit_Item> getUnits(){
+        return this.unit;
+    }
     public Establishment_Item(String establishmentName, int establishmentType) {
         this.establishmentName = establishmentName;
         this.establishmentType = establishmentType;

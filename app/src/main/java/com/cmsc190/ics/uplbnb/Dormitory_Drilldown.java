@@ -135,7 +135,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
             public void onDataChange(DataSnapshot dataSnapshot) {
                 e = dataSnapshot.getValue(Dormitory_Item.class);
                 if(e == null){
-                    getActivity().getFragmentManager().popBackStack();
+                    getActivity().finish();
                     return;
                 }
                 rating.setRating(computeRating(e));

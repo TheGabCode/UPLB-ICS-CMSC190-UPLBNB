@@ -327,14 +327,16 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
 
             }
         }
+        HashMap<String,Review> review = e.getReviews();
+        HashMap<String,Unit_Item> unit = e.getUnits();
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
         String id = intent.getStringExtra("establishmentId");
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,e.getReviews(),latitude,longitude,mPlace);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, e.getOwner_id(), isFixedPrice,review,latitude,longitude,mPlace,unit);
             databaseReference.child(id).setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,e.getReviews(),latitude,longitude,mPlace);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit);
             databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
