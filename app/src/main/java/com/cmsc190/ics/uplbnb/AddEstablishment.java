@@ -89,6 +89,8 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
     LinearLayout dormitoryCapacityPerUnitLayout;
     LinearLayout dormitoryFurnitureLayout;
     LinearLayout dormFurnitureContainer;
+    LinearLayout dormAcceptedSexLayout;
+    Spinner acceptedSexSpinner;
     EditText dormitoryFurnitureQty;
     EditText dormitoryFurnitureItem;
     Button dormitoryAddItemBtn;
@@ -233,8 +235,10 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         int intConcealPrice = concealPriceSpinner.getSelectedItemPosition();
         int intConcealUnits = concealUnitsSpinner.getSelectedItemPosition();
         int intIncludeBillsInRate = includeBillsInRateSpinner.getSelectedItemPosition();
+        int intAcceptedSex = acceptedSexSpinner.getSelectedItemPosition();
+        int acceptedSex = -1;
         float rating = 0f;
-
+        int numUnitsAvailable = 0;
         if(establishmentType == 1){
             if(fixedPriceApartment.isChecked()){
                 isFixedPrice = true;
@@ -270,6 +274,15 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         concealUnits = (intConcealUnits == 0)? true : false;
         includeBillsInRate = (intIncludeBillsInRate == 0) ? true : false;
 
+        if(intAcceptedSex == 0){
+            acceptedSex = -1;
+        }
+        else if(intAcceptedSex == 1){
+            acceptedSex = 1;
+        }
+        else{
+            acceptedSex = 0;
+        }
         if(TextUtils.isEmpty(establishmentNameString)){
             Toast.makeText(getApplicationContext(), "Please enter establishment name.",Toast.LENGTH_SHORT).show();
             return;
@@ -327,11 +340,11 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").push();
         String id = databaseReference.getKey();
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,review, latitude,longitude,mPlace,unit);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,review, latitude,longitude,mPlace,unit,numUnitsAvailable);
             databaseReference.setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,review,latitude,longitude,mPlace,unit);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,review,latitude,longitude,mPlace,unit,numUnitsAvailable,acceptedSex);
             databaseReference.setValue(newEstablishment);
         }
         saveImage(id);
@@ -382,6 +395,8 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         capacityPerUnitDorm = (EditText)findViewById(R.id.addEstablishmentCapacityPerUnit);
         capacityPerUnitDorm.setText("0");
         apartmentRentYears.setText("0");
+        dormAcceptedSexLayout = (LinearLayout)findViewById(R.id.addEstablishmentDormitoryAcceptedSexLayout);
+        acceptedSexSpinner = (Spinner)findViewById(R.id.acceptedSexSpinner);
         uploadImageButton = (Button)findViewById(R.id.addEstablishmentUploadImageBtn);
         /*saveImageButton = (Button)findViewById(R.id.addEstablishmentSaveImageBtn);*/
         previewImage = (ImageView)findViewById(R.id.addEstablishmentUploadPhotoPreview);
@@ -431,12 +446,14 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
                     dormitoryPriceLayout.setVisibility(View.GONE);
                     dormitoryCapacityPerUnitLayout.setVisibility(View.GONE);
                     dormitoryFurnitureLayout.setVisibility(View.GONE);
+                    dormAcceptedSexLayout.setVisibility(View.GONE);
                 }
                 else if(i == 1){
                     establishmentType = 0; //if adding dormitory
                     dormitoryCapacityPerUnitLayout.setVisibility(View.VISIBLE);
                     dormitoryPriceLayout.setVisibility(View.VISIBLE);
                     dormitoryFurnitureLayout.setVisibility(View.VISIBLE);
+                    dormAcceptedSexLayout.setVisibility(View.VISIBLE);
                     apartmentConditionLayout.setVisibility(View.GONE);
                     apartmentPriceLayout.setVisibility(View.GONE);
                     apartmentRentYearsLayout.setVisibility(View.GONE);

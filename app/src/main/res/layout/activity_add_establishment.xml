@@ -389,6 +389,49 @@
 
             </LinearLayout>
         </LinearLayout>
+            <LinearLayout
+                android:id="@+id/addEstablishmentDormitoryAcceptedSexLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp">
+
+                <ImageView
+                    android:id="@+id/addEstablishmentAcceptedSexIcon"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_weight="0.5"
+                    app:srcCompat="@drawable/toilet_52px" />
+                <LinearLayout
+                    android:background="#fff"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/addEstablishmentAcceptedSexLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Accepted sex" />
+
+                    <Spinner
+                        android:id="@+id/acceptedSexSpinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:entries="@array/accepted_tenants" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+
         <LinearLayout
             android:id="@+id/addEstablishmentDormitoryCapacityLayout"
             android:layout_width="match_parent"

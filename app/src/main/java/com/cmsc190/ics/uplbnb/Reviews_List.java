@@ -54,6 +54,7 @@ public class Reviews_List extends Fragment implements View.OnClickListener {
                 i.putExtra("establishmentType",getArguments().getInt("establishmentType"));
                 i.putExtra("establishmentRating",getArguments().getFloat("establishmentRating"));
                 i.putExtra("establishmentId",getArguments().getString("establishmentId"));
+
                 startActivity(i);
                     //move to write review intent
             }

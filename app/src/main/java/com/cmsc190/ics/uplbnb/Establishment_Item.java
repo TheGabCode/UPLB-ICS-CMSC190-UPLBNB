@@ -41,7 +41,8 @@ public class Establishment_Item implements Serializable{
     private double latitude;
     private double longitude;
     private PlaceInfo placeInfo;
-    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit ) {
+    private int numUnitsAvailable;
+    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit, int numUnitsAvailable ) {
         this.owner_id = owner_Id;
         this.establishmentName = establishmentName;
         this.contactPerson = contactPerson;
@@ -57,7 +58,7 @@ public class Establishment_Item implements Serializable{
         this.distanceFromCampus = distanceFromCampus;
         this.security = security;
         this.id = id;
-
+        this.numUnitsAvailable = numUnitsAvailable;
         this.concealContactPerson = concealContactPerson;
         this.concealPrice = concealPrice;
         this.concealAvailableUnits = concealAvailableUnits;
@@ -78,7 +79,9 @@ public class Establishment_Item implements Serializable{
     public String getId(){return this.id;}
     public float getRating(){ return rating; }
 
-
+    public int getNumUnitsAvailable(){
+        return numUnitsAvailable;
+    }
     public PlaceInfo getPlaceInfo(){
         return placeInfo;
     }

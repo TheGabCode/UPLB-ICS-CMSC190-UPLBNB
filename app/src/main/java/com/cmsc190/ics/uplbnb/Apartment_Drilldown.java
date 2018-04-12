@@ -152,7 +152,7 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
                 if(e != null){
                     addressLat = e.getLatitude();
                     addressLong = e.getLongitude();
-                    rating.setRating(computeRating(e));
+                    rating.setRating(e.getRating());
 
                     establishmentName.setText(e.getEstablishmentName());
                     establishmentAddress.setText(e.getAddress());

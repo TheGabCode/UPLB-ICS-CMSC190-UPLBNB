@@ -55,6 +55,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
     Unit_Item unit;
     ActionBar actionBar;
     DatabaseReference databaseReference;
+    DatabaseReference unitRef;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -63,12 +64,12 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
         unit = (Unit_Item)intent.getSerializableExtra("unit");
         int establishmentType   = intent.getIntExtra("establishmentType",1);
         actionBar = getActionBar();
-       /* if(establishmentType == 1){
+        if(establishmentType == 1){
             e = (Apartment_Item)intent.getSerializableExtra("establishment");
         }
         else{
             e = (Dormitory_Item)intent.getSerializableExtra("establishment");
-        }*/
+        }
         setContentView(R.layout.activity_edit_unit);
         dormitoryAttributes = (LinearLayout)findViewById(R.id.addUnitDormCapacityContainer);
         apartmentAttributes = (LinearLayout)findViewById(R.id.addUnitApartmentPart);
@@ -285,7 +286,11 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
             }
             slotsAvailable = Integer.parseInt(unitSlotsAvailable.getText().toString().trim());
             ratePerHead = intent.getBooleanExtra("ratePerHead",false);
-
+            if(slotsAvailable > 0){
+                open = 1;
+            }else{
+                open = 0;
+            }
 
             for(int i = 1; i < unitFurnitureContainer.getChildCount() - 1; i++){
                 View v = unitFurnitureContainer.getChildAt(i);
@@ -333,13 +338,45 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
 
 
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("unit").child(unit.getId());
-
         Unit_Item unitUpdate = new Unit_Item(unitIdentifier, open, slotsAvailable, rate, unit.getId(),  condition, furniture, ratePerHead,capacity);
         databaseReference.setValue(unitUpdate);
+
+
+
+        DatabaseReference establishmentReference = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId);
+        establishmentReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Establishment_Item e = dataSnapshot.getValue(Establishment_Item.class);
+                unitRef = FirebaseDatabase.getInstance().getReference("establishment").child(e.getId()).child("numUnitsAvailable");
+                unitRef.setValue(countOpenUnits(e));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
         finish();
 
     }
 
 
+    public int countOpenUnits(Establishment_Item e){
+        int totalOpen = 0;
+        if(e.unit != null){
+            Iterator entries = e.unit.entrySet().iterator();
+            while (entries.hasNext()){
+                HashMap.Entry entry = (HashMap.Entry) entries.next();
+                Unit_Item value = (Unit_Item) entry.getValue();
+                if(value.getStatus() == 1){
+                    totalOpen++;
+                }
+            }
+        }
+        return totalOpen;
+    }
 
 }

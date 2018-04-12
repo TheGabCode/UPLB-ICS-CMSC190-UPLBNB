@@ -18,6 +18,12 @@
         <item>Apartment</item>
         <item>Dormitory</item>
     </string-array>
+    <string-array name="establishment_types2">
+        <item>Any</item>
+        <item>Apartment</item>
+        <item>Dormitory</item>
+    </string-array>
+
     <string-array name="yes_no">
         <item>Yes</item>
         <item>No</item>
@@ -29,6 +35,32 @@
     <string-array name="open_closed">
         <item>Open</item>
         <item>Closed</item>
+    </string-array>
+    <string-array name="sort_establishments">
+        <item>Sort A-Z</item>
+        <item>Sort Z-A</item>
+        <item>Price low to high</item>
+        <item>Price high to low</item>
+        <item>Rating low to high</item>
+        <item>Rating high to low</item>
+        <item>Distance from UPLB Gate low to high</item>
+        <item>Distance from UPLB Gate high to low</item>
+    </string-array>
+    <string-array name="accepted_tenants">
+        <item>Coed</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string-array name="filter_yes_no">
+        <item>---</item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string-array name="filter_accepted_tenants">
+        <item>---</item>
+        <item>Coed</item>
+        <item>Male</item>
+        <item>Female</item>
     </string-array>
 
 </resources>

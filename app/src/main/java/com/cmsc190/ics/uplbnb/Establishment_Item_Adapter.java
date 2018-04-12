@@ -57,7 +57,7 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
             holder.establishmentCategory.setText("Dormitory");
         }
 
-        float rating = computeRating(establishment);
+        float rating = establishment.getRating();
         holder.ratingBarEstablishment.setRating(rating);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

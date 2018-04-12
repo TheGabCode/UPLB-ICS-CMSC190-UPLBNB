@@ -2,6 +2,7 @@ package com.cmsc190.ics.uplbnb;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,8 +10,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.content.Intent;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class WriteReview extends AppCompatActivity {
@@ -24,6 +31,7 @@ public class WriteReview extends AppCompatActivity {
     private Button addReviewSubmitButton;
     private Intent intent;
     private DatabaseReference databaseReference;
+    DatabaseReference revReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,38 @@ public class WriteReview extends AppCompatActivity {
         Review rev = new Review(authorname,description,rating,reviewTitle);
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").child(intent.getStringExtra("establishmentId")).child("review").push();
         databaseReference.setValue(rev);
+        databaseReference = FirebaseDatabase.getInstance().getReference("establishment").child(intent.getStringExtra("establishmentId"));
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Establishment_Item e = dataSnapshot.getValue(Establishment_Item.class);
+                revReference = FirebaseDatabase.getInstance().getReference("establishment").child(e.getId()).child("rating");
+                revReference.setValue(computeRating(e));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        })   ;
         finish();
+    }
+
+    public float computeRating(Establishment_Item e){
+        float totalSum = 0f;
+
+        if(e.review != null){
+            int totalReview = e.getReviews().size();
+            Iterator entries = e.getReviews().entrySet().iterator();
+            while (entries.hasNext()){
+                HashMap.Entry entry = (HashMap.Entry) entries.next();
+                Review value = (Review)entry.getValue();
+                totalSum += value.getRating();
+            }
+            return totalSum/totalReview;
+        }
+        else{
+            return totalSum;
+        }
     }
 }

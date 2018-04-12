@@ -388,6 +388,8 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+
             <LinearLayout
                 android:id="@+id/editEstablishmentDormitoryCapacityLayout"
                 android:layout_width="match_parent"
@@ -431,6 +433,56 @@
 
                 </LinearLayout>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:id="@+id/editEstablishmentAcceptedSexLayout"
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp">
+
+                <ImageView
+                    android:id="@+id/editEstablishmentAcceptedSexIcon"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_weight="0.5"
+                    app:srcCompat="@drawable/toilet_52px" />
+                <LinearLayout
+                    android:background="#fff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/editEstablishmentAcceptedSexLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp"
+                        android:text="Accepted sex" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+
+                        <Spinner
+                            android:id="@+id/editEstablishmentAcceptedSexSpinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:entries="@array/accepted_tenants" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
             <LinearLayout
                 android:id="@+id/editEstablishmentSecurityLayout"
                 android:layout_width="match_parent"

@@ -138,7 +138,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                     getActivity().finish();
                     return;
                 }
-                rating.setRating(computeRating(e));
+                rating.setRating(e.getRating());
 
                 establishmentName.setText(e.getEstablishmentName());
 

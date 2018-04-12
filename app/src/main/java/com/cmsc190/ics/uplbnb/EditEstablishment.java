@@ -96,6 +96,8 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
     LinearLayout dormitoryCapacityPerUnitLayout;
     LinearLayout dormitoryFurnitureLayout;
     LinearLayout dormFurnitureContainer;
+    LinearLayout dormAcceptedSexLayout;
+    Spinner acceptedSexSpinner;
     EditText dormitoryFurnitureQty;
     EditText dormitoryFurnitureItem;
     Button dormitoryAddItemBtn;
@@ -240,8 +242,9 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         int intConcealPrice = concealPriceSpinner.getSelectedItemPosition();
         int intConcealUnits = concealUnitsSpinner.getSelectedItemPosition();
         int intIncludeBillsInRate = includeBillsInRateSpinner.getSelectedItemPosition();
+        int intAcceptedSex = acceptedSexSpinner.getSelectedItemPosition();
         float rating = e.getRating();
-
+        int acceptedSex = -1;
         if(establishmentType == 1){
             if(fixedPriceApartment.isChecked()){
                 isFixedPrice = true;
@@ -276,6 +279,16 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         concealPrice = (intConcealPrice == 0) ? true : false;
         concealUnits = (intConcealUnits == 0)? true : false;
         includeBillsInRate = (intIncludeBillsInRate == 0) ? true : false;
+
+        if(intAcceptedSex == 0){
+            acceptedSex = -1;
+        }
+        else if(intAcceptedSex == 1){
+            acceptedSex = 1;
+        }
+        else{
+            acceptedSex = 0;
+        }
 
         if(TextUtils.isEmpty(establishmentNameString)){
             Toast.makeText(getApplicationContext(), "Please enter establishment name.",Toast.LENGTH_SHORT).show();
@@ -332,11 +345,11 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
         String id = intent.getStringExtra("establishmentId");
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, e.getOwner_id(), isFixedPrice,review,latitude,longitude,mPlace,unit);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, e.getOwner_id(), isFixedPrice,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable());
             databaseReference.child(id).setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),acceptedSex);
             databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
@@ -412,6 +425,8 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         dormitoryCapacityPerUnitLayout = (LinearLayout)findViewById(R.id.editEstablishmentDormitoryCapacityLayout);
         dormFurnitureContainer = (LinearLayout)findViewById(R.id.editEstablishmentFurnitureContainer);
         dormitoryFurnitureLayout = (LinearLayout)findViewById(R.id.editEstablishmentFurnitureLayout);
+        dormAcceptedSexLayout = (LinearLayout)findViewById(R.id.editEstablishmentAcceptedSexLayout);
+        acceptedSexSpinner = (Spinner)findViewById(R.id.editEstablishmentAcceptedSexSpinner);
         dormitoryFurnitureQty = (EditText)findViewById(R.id.dormitoryFurnitureQty);
         dormitoryFurnitureItem = (EditText)findViewById(R.id.dormitoryFurnitureItem);
         dormitoryAddItemBtn = (Button)findViewById(R.id.addFurnitureBtn);
@@ -566,6 +581,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
             dormitoryPriceLayout.setVisibility(View.GONE);
             dormitoryCapacityPerUnitLayout.setVisibility(View.GONE);
             dormitoryFurnitureLayout.setVisibility(View.GONE);
+            dormAcceptedSexLayout.setVisibility(View.GONE);
             if(((Apartment_Item)item).getIsFixedPrice() == true){
                 fixedPriceApartment.setChecked(true);
                 maxPriceApartment.setText(item.getPrice());
@@ -593,6 +609,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
             dormitoryCapacityPerUnitLayout.setVisibility(View.VISIBLE);
             dormitoryPriceLayout.setVisibility(View.VISIBLE);
             dormitoryFurnitureLayout.setVisibility(View.VISIBLE);
+            dormAcceptedSexLayout.setVisibility(View.VISIBLE);
             apartmentConditionLayout.setVisibility(View.GONE);
             apartmentPriceLayout.setVisibility(View.GONE);
             apartmentRentYearsLayout.setVisibility(View.GONE);
@@ -613,6 +630,16 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
                     Integer value = (Integer)entry.getValue();
                     addFurniture(key,value);
                 }
+            }
+
+            if(((Dormitory_Item)item).getAcceptedSex() == -1){
+                acceptedSexSpinner.setSelection(0);
+            }
+            else if(((Dormitory_Item)item).getAcceptedSex() == 1){
+                acceptedSexSpinner.setSelection(1);
+            }
+            else{
+                acceptedSexSpinner.setSelection(2);
             }
         }
 
@@ -665,6 +692,8 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         else{
             includeBillsInRateSpinner.setSelection(1);
         }
+
+
     }
 
     public void addFurniture(View v){

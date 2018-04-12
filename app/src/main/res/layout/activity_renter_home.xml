@@ -17,10 +17,12 @@
         tools:layout_editor_absoluteX="0dp"
         android:layout_weight="0">
         <Spinner
-            android:id="@+id/spinner"
+            android:id="@+id/sortspinner"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:entries="@array/sort_establishments"
+            android:textAlignment="center"/>
         <Button
             android:id="@+id/filterOption"
             android:layout_width="50dp"

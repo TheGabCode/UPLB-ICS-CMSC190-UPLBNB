@@ -211,6 +211,12 @@ public class AddUnit extends AppCompatActivity {
             slotsAvailable = Integer.parseInt(unitSlotsAvailable.getText().toString().trim());
             ratePerHead = intent.getBooleanExtra("ratePerHead",false);
 
+            if(slotsAvailable > 0){
+                open = 1;
+            }
+            else{
+                open = 0;
+            }
 
             for(int i = 1; i < unitFurnitureContainer.getChildCount() - 1; i++){
                 View v = unitFurnitureContainer.getChildAt(i);
@@ -260,12 +266,30 @@ public class AddUnit extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("unit").push();
         id = databaseReference.getKey();
 
+
         Unit_Item unit = new Unit_Item(unitIdentifier, open, slotsAvailable, rate, id,  condition, furniture, ratePerHead,capacity);
         databaseReference.setValue(unit);
+
+        DatabaseReference unitRef = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("numUnitsAvailable");
+        unitRef.setValue(countOpenUnits(e));
+
         finish();
 
     }
 
-
+    public int countOpenUnits(Establishment_Item e){
+        int totalOpen = 0;
+        if(e.unit != null){
+            Iterator entries = e.unit.entrySet().iterator();
+            while (entries.hasNext()){
+                HashMap.Entry entry = (HashMap.Entry) entries.next();
+                Unit_Item value = (Unit_Item) entry.getValue();
+                if(value.getStatus() == 1){
+                    totalOpen++;
+                }
+            }
+        }
+        return totalOpen;
+    }
 
 }
