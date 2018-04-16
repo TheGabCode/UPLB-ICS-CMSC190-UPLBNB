@@ -9,10 +9,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.content.Intent;
 import android.widget.Toast;
+
+import com.bumptech.glide.signature.ObjectKey;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +36,9 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
 
     List<Establishment_Item> establishment_items;
     Context context;
+    StorageReference headerReference;
+    StorageReference storageReference;
+    FirebaseStorage firebaseStorage;
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,8 +49,16 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Establishment_Item establishment = establishment_items.get(position);
 
+        final Establishment_Item establishment = establishment_items.get(position);
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
+
+        headerReference = storageReference.child("establishments/"+establishment.getId());
+        GlideApp.with(context)
+                .load(headerReference)
+                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                .into(holder.thumbnail);
         /*if(e.getEstablishmentType() == 1){
             e = (Apartment_Item)e;
         }
@@ -105,10 +121,11 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
          public TextView textViewEstablishmentName;
          public TextView establishmentCategory;
          public RatingBar ratingBarEstablishment;
+         ImageView thumbnail;
 
          public ViewHolder(View itemView) {
             super(itemView);
-
+            thumbnail = (ImageView)itemView.findViewById(R.id.establishmentThumbnail);
             textViewEstablishmentName = (TextView) itemView.findViewById(R.id.establishment_item_name);
             establishmentCategory = (TextView) itemView.findViewById(R.id.establishment_item_category);
             ratingBarEstablishment = (RatingBar) itemView.findViewById(R.id.establishment_item_rating);

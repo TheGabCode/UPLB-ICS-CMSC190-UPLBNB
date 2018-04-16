@@ -183,14 +183,22 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     args4.putFloat("establishmentRating",e.getRating());
                     r1.setArguments(args4);
                     return r1;
+                case 3:
+                    Photo_List p1 = new Photo_List();
+                    Bundle args5 = new Bundle();
+                    args5.putString("establishmentId",e.getId());
+                    p1.setArguments(args5);
+                    return p1;
+
             }
             return null;
         }
 
         @Override
         public int getCount() {
+
             // Show 3 total pages.
-            return 3;
+            return 4;
         }
 
 

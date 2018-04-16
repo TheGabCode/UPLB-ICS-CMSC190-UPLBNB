@@ -17,8 +17,8 @@ public class Apartment_Item extends Establishment_Item implements Serializable {
 
     }
 
-    public Apartment_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, int rentYears, boolean furnished, float rating, String id, String owner_id, boolean isFixedPrice, HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit, int numUnitsAvailable) {
-        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security, concealContactPerson, concealPrice, concealAvailableUnits, rating,id,owner_id,review,latitude,longitude,placeInfo,unit,numUnitsAvailable);
+    public Apartment_Item(String establishmentName, String contactPerson, String contactNumber1, String getContactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, int rentYears, boolean furnished, float rating, String id, String owner_id, boolean isFixedPrice, HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit, int numUnitsAvailable,HashMap<String,String> picture) {
+        super(establishmentName, contactPerson, contactNumber1, getContactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, billsIncludedInRate, distanceFromCampus, security, concealContactPerson, concealPrice, concealAvailableUnits, rating,id,owner_id,review,latitude,longitude,placeInfo,unit,numUnitsAvailable,picture);
        //this.fixedPrice = fixedPrice;
         this.rentYears = rentYears;
         this.furnished = furnished;

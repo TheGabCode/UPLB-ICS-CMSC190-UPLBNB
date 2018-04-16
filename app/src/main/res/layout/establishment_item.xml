@@ -30,11 +30,12 @@
             android:background="@drawable/background_with_shadow">
 
             <ImageView
-                android:id="@+id/establishmentImage"
+                android:id="@+id/establishmentThumbnail"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
-                app:srcCompat="@mipmap/ic_launcher" />
+                app:srcCompat="@mipmap/ic_launcher"
+                android:scaleType="centerCrop"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

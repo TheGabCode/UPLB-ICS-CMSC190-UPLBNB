@@ -36,6 +36,9 @@ import android.widget.Toast;
 import android.content.Intent;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -61,6 +64,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -177,15 +181,29 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         if(filePath != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
-          /*  progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-          */  StorageReference ref = storageReference.child("establishments/"+ establishmentId);
-            ref.putFile(filePath)
+            /*progressDialog.setTitle("Uploading...");
+            progressDialog.show();*/
+            StorageReference ref = storageReference.child("establishments/"+ establishmentId);
+
+            Bitmap bmp = null;
+
+            try{
+                bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+            byte[] data = baos.toByteArray();
+            ref.putBytes(data)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-            //                progressDialog.dismiss();
+              //              progressDialog.dismiss();
                             Toast.makeText(EditEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                            finish();
+
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -342,18 +360,20 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         }
         HashMap<String,Review> review = e.getReviews();
         HashMap<String,Unit_Item> unit = e.getUnits();
+        HashMap<String,String> picture = e.getPictures();
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
         String id = intent.getStringExtra("establishmentId");
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, e.getOwner_id(), isFixedPrice,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable());
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, e.getOwner_id(), isFixedPrice,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),picture);
             databaseReference.child(id).setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),acceptedSex);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),acceptedSex,picture);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),acceptedSex,picture);
             databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
-        finish();
+       // finish();
 
     }
     @Override
@@ -568,6 +588,10 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
 
     public void setupEstablishmentInputFields(Establishment_Item item){
         StorageReference previewRef = storageReference.child("establishments/"+item.getId());
+        GlideApp.with(getApplicationContext())
+                .load(previewRef)
+                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                .into(previewImage);
         mPlace = item.getPlaceInfo();
        // Log.d("Stuff1",e.getEstablishmentName());
         establishmentName.setText(item.getEstablishmentName());

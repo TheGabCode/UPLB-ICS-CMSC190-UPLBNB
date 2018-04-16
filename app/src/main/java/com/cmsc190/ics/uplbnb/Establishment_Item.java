@@ -31,6 +31,7 @@ public class Establishment_Item implements Serializable{
     private boolean security;
     public HashMap<String,Unit_Item> unit;
     public HashMap<String,Review> review;
+    public HashMap<String,String> picture;
     //private List<Unit_Item> units;
     private boolean concealContactPerson;
     private boolean concealPrice;
@@ -42,7 +43,7 @@ public class Establishment_Item implements Serializable{
     private double longitude;
     private PlaceInfo placeInfo;
     private int numUnitsAvailable;
-    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit, int numUnitsAvailable ) {
+    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit, int numUnitsAvailable,HashMap<String,String> picture ) {
         this.owner_id = owner_Id;
         this.establishmentName = establishmentName;
         this.contactPerson = contactPerson;
@@ -67,6 +68,7 @@ public class Establishment_Item implements Serializable{
         this.latitude = latitude;
         this.longitude = longitude;
         this.placeInfo = placeInfo;
+        this.picture = picture;
     }
 
     public String getEstablishmentName() {
@@ -152,6 +154,10 @@ public class Establishment_Item implements Serializable{
 
     public HashMap<String, Unit_Item> getUnits(){
         return this.unit;
+    }
+
+    public HashMap<String,String> getPictures() {
+        return this.picture;
     }
     public Establishment_Item(String establishmentName, int establishmentType) {
         this.establishmentName = establishmentName;

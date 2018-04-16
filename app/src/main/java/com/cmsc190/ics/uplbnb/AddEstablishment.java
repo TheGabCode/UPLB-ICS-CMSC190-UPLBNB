@@ -55,6 +55,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,13 +171,27 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
 //            progressDialog.show();
-            StorageReference ref = storageReference.child("establishments/"+establishmentId);
 
-            ref.putFile(filePath)
+            StorageReference ref;
+            Bitmap bmp = null;
+
+            try{
+                 bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+            byte[] data = baos.toByteArray();
+            ref = storageReference.child("establishments/"+establishmentId+"/"+filePath.getLastPathSegment());
+
+            ref.putBytes(data)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 //                            progressDialog.dismiss();
+
                             Toast.makeText(AddEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -313,6 +328,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         HashMap<String,Integer> furniture = new HashMap<String, Integer>();
         HashMap<String, Review> review = new HashMap<String, Review>();
         HashMap<String,Unit_Item> unit = new HashMap<String, Unit_Item>();
+        HashMap<String,String> picture = new HashMap<String, String>();
 
         if(establishmentType == 0){
             for(int i = 1; i < dormFurnitureContainer.getChildCount() - 1; i++){
@@ -340,11 +356,11 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").push();
         String id = databaseReference.getKey();
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,review, latitude,longitude,mPlace,unit,numUnitsAvailable);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,review, latitude,longitude,mPlace,unit,numUnitsAvailable,picture);
             databaseReference.setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,review,latitude,longitude,mPlace,unit,numUnitsAvailable,acceptedSex);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,review,latitude,longitude,mPlace,unit,numUnitsAvailable,acceptedSex,picture);
             databaseReference.setValue(newEstablishment);
         }
         saveImage(id);

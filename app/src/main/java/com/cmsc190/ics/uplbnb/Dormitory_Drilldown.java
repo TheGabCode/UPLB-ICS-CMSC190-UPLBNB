@@ -13,9 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,8 +49,12 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     public static TextView furnitureAvailable;
     public static TextView capacityPerUnit;
     public static RatingBar rating;
+    public static ImageView headPhoto;
     public static ImageButton editEstablishmentBtn;
     private DatabaseReference databaseReference;
+    StorageReference headerReference;
+    StorageReference storageReference;
+    FirebaseStorage firebaseStorage;
     public static Dormitory_Item e;
     public static FloatingActionButton openMap;
     FirebaseUser firebaseUser;
@@ -98,7 +106,10 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
 
 
         View view =  inflater.inflate(R.layout.fragment_establishment__drilldown_dormitory,container,false);
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
         rating = (RatingBar)view.findViewById(R.id.drilldownDormitoryRating);
+        headPhoto = (ImageView)view.findViewById(R.id.imageDormitory);
         establishmentAddress = (TextView)view.findViewById(R.id.drilldownDormitoryAddress);
         establishmentName = (TextView) view.findViewById(R.id.drilldownDormitoryName);
         contactPerson = (TextView)view.findViewById(R.id.drilldownDormitoryContactPerson);
@@ -182,6 +193,11 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                 }
 
                 capacityPerUnit.setText(e.getCapacityPerUnit() + " persons");
+                headerReference = storageReference.child("establishments/"+e.getId());
+                GlideApp.with(getActivity())
+                        .load(headerReference)
+                        .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                        .into(headPhoto);
                 initUser();
 
             }
