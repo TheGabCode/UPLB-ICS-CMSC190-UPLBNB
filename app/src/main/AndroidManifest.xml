@@ -29,7 +29,6 @@
             android:theme="@style/AppLoginTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -46,7 +45,8 @@
             android:name=".registration"
             android:label="@string/title_activity_registration"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+/>
         <activity
             android:name=".RenterHome"
             android:label="UPLBnB"

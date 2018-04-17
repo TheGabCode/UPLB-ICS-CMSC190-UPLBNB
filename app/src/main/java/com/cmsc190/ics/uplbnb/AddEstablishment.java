@@ -222,7 +222,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
     public void addEstablishment(){
         Establishment_Item newEstablishment;
         String establishmentNameString = establishmentName.getText().toString().trim();
-        String contactPerson = user.getId();
+        String contactPerson = user.getFullname();
         String contactNumber = user.getNumber();
         String address = addEstablishmentAddressAutocomplete.getText().toString().trim();
         double latitude,longitude;

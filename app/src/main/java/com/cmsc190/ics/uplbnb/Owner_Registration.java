@@ -105,7 +105,7 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
                                         databaseReference.child("user").child(id).setValue(new_user);
                                         progressDialog.dismiss();
                                         Toast.makeText(getActivity(),"Owner successfully registered!",Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(getContext(),RenterHome.class);
+                                        Intent i = new Intent(getContext(),OwnerHome.class);
                                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         startActivity(i);
                                         progressDialog.dismiss();

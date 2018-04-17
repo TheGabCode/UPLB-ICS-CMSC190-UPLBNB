@@ -12,7 +12,8 @@
             android:id="@+id/addPhotoBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add Photo"/>
+            android:text="Add Photo"
+            />
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -28,42 +29,18 @@
 
         <Button
             android:id="@+id/savePhotoBtn"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Upload Photo(s)"/>
+            android:text="Finish"
+            android:layout_gravity="center_horizontal"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:paddingLeft="20dp">
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/photo_gallery_48px"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pictures"
-                android:textSize="20dp"/>
-        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="20dp"
+            android:paddingTop="0dp"
             android:paddingBottom="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No Photos to display"
-                android:layout_gravity="center"/>
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/pencil_48px"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/fetchedImageRecyclerView"

@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.vi8e.giant.AddressListActivity">
+
+    <item
+        android:title="Manual"
+        android:id="@+id/Manual"
+        android:icon="@drawable/trash_48px"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:title="Help a nigga graduate"
+        android:id="@+id/SUS"
+        android:icon="@drawable/trash_48px"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+    <item
+        android:title="Logout"
+        android:id="@+id/Logout"
+        android:icon="@drawable/trash_48px"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        />
+</menu>

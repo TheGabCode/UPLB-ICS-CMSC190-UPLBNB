@@ -56,8 +56,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_establishment__drilldown);
         i = getIntent();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -75,27 +74,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_establishment__drilldown, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -183,6 +162,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     args4.putFloat("establishmentRating",e.getRating());
                     r1.setArguments(args4);
                     return r1;
+
                 case 3:
                     Photo_List p1 = new Photo_List();
                     Bundle args5 = new Bundle();

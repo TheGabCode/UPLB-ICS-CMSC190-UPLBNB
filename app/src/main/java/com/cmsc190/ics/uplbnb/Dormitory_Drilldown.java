@@ -51,6 +51,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     public static RatingBar rating;
     public static ImageView headPhoto;
     public static ImageButton editEstablishmentBtn;
+    public static TextView establishmentType;
     private DatabaseReference databaseReference;
     StorageReference headerReference;
     StorageReference storageReference;
@@ -105,10 +106,12 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState) {
 
 
-        View view =  inflater.inflate(R.layout.fragment_establishment__drilldown_dormitory,container,false);
+        View view =  inflater.inflate(R.layout.fragment_dormitory_drilldown,container,false);
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
         rating = (RatingBar)view.findViewById(R.id.drilldownDormitoryRating);
+        establishmentType = (TextView)view.findViewById(R.id.drilldownDormitoryType);
+        furnitureAvailable = (TextView)view.findViewById(R.id.drilldownDormitoryAvailableFurniture);
         headPhoto = (ImageView)view.findViewById(R.id.imageDormitory);
         establishmentAddress = (TextView)view.findViewById(R.id.drilldownDormitoryAddress);
         establishmentName = (TextView) view.findViewById(R.id.drilldownDormitoryName);
@@ -152,7 +155,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                 rating.setRating(e.getRating());
 
                 establishmentName.setText(e.getEstablishmentName());
-
+                establishmentType.setText("Dormitory");
                 establishmentAddress.setText(e.getAddress());
 
                 contactPerson.setText(e.getContactPerson());
@@ -169,21 +172,31 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                     priceRange.append(", bills included");
                 }
                 else{
-                    priceRange.append(", bills excluded");
+                    priceRange.append(", bills not included");
                 }
 
 
 
-                curfewHours.setText(e.getCurfewHours());
+                if(e.getCurfewHours().equals("-")){
+                    curfewHours.setText("No curfew hours");
+                }
+                else{
+                    curfewHours.setText(e.getCurfewHours());
+                }
 
                 //visitorsAllowed.setText("Visitors allowed? ");
                 if(e.isVisitorsAllowed() == true){
-                    visitorsAllowed.setText("Yes");
+                    visitorsAllowed.setText("Visitors allowed");
                 }else {
-                    visitorsAllowed.setText("No");
-                }
+                    visitorsAllowed.setText("No visitors allowed");
 
-                distanceFromCampus.setText(e.getDistanceFromCampus() + "m");
+                }
+                if(e.getDistanceFromCampus() >= 1000){
+                    distanceFromCampus.setText(Math.floor((e.getDistanceFromCampus()/1000)) + "km");
+                }
+                else{
+                    distanceFromCampus.setText(Math.floor(e.getDistanceFromCampus()) + "m");
+                }
 
                 if(e.isSecurity() == true){
                     security.setText("Security measures implemented");
@@ -192,10 +205,12 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                     security.setText("No security measures implemented");
                 }
 
+                furnitureAvailable.setText(stringifyFurniture(e.getAvailableFurniture()));
                 capacityPerUnit.setText(e.getCapacityPerUnit() + " persons");
                 headerReference = storageReference.child("establishments/"+e.getId());
                 GlideApp.with(getActivity())
                         .load(headerReference)
+                        .placeholder(R.drawable.logo2)
                         .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
                         .into(headPhoto);
                 initUser();
@@ -241,6 +256,22 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View view){
 
+    }
+
+    public String stringifyFurniture(HashMap<String,Integer> furniture){
+        String furnitureItems = "";
+        if(furniture != null){
+            Iterator entries = furniture.entrySet().iterator();
+            while (entries.hasNext()){
+                HashMap.Entry entry = (HashMap.Entry) entries.next();
+                String key = (String)entry.getKey();
+                Integer value = (Integer)entry.getValue();
+                furnitureItems+=value + " x " + key + "\n";
+            }
+            furnitureItems = furnitureItems.substring(0,furnitureItems.length() - 1);
+        }
+
+        return furnitureItems;
     }
 
 }

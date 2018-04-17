@@ -1,6 +1,8 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.app.ActionBar;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +18,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +39,7 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
     Button filterButton;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refEstablishments;
-
+    ActionBar mainActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,7 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
         setContentView(R.layout.activity_renter_home);
         establishment_items = new ArrayList<>();
 
-
+        mainActionBar = getActionBar();
         //Toolbar toolbar = (Toolbar) findViewById(R.id.home_toolbar);
         //setSupportActionBar(toolbar);
         filterButton = (Button)findViewById(R.id.filterOption);
@@ -136,23 +139,49 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
         });
 
 
-        Toast.makeText(getApplicationContext(), "Successfully logged in", Toast.LENGTH_SHORT).show();
+
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.renter_home, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.Logout:
+                logout();
+                return true;
+            case R.id.SUS:
+                SUS();
+                return true;
+            case R.id.Manual:
+                manual();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
+    public void logout(){
+        FirebaseAuth.getInstance().signOut();
+        finish();
+        Intent i = new Intent(getApplicationContext(),Sign_in.class);
+        startActivity(i);
+    }
+    public void SUS(){}
+    public void manual(){}
 
+    @Override
+    public void onBackPressed(){
+        DialogFragment newFragment = new QuitApplicationDialogFragment();
+        newFragment.show(getFragmentManager(), "Quit");
+    }
 
     public void filterMenu(){
         DialogFragment dialogFragment = new FilterDialogFragment();

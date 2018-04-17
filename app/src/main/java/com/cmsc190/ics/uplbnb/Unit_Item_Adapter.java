@@ -36,7 +36,7 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.unit_item,parent,false);
+                .inflate(R.layout.unit_item_2,parent,false);
         return new ViewHolder(v);
     }
 
@@ -44,7 +44,7 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Unit_Item unit = unit_items.get(position);
 
-        holder.unitIdentifier.setText("Unit " + unit.getUnitIdentifier());
+        holder.unitIdentifier.setText(unit.getUnitIdentifier());
         holder.unitRate.setText(unit.getRate() + " PHP");
         if(unit.getStatus() == 1){
             holder.unitStatus.setText("Open");
@@ -55,7 +55,7 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
         if(unit.getSlotsAvailable() == -1){
             holder.unitAvailableSlot.setVisibility(View.INVISIBLE);
         }else{
-            holder.unitAvailableSlot.setText(unit.getSlotsAvailable() + " slots available");
+            holder.unitAvailableSlot.setText(unit.getSlotsAvailable() + " slot(s) available");
         }
         /*if(e.getEstablishmentType() == 1){
             e = (Apartment_Item)e;

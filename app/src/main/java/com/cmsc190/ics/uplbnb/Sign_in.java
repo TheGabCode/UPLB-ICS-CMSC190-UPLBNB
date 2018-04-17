@@ -1,5 +1,6 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -35,13 +36,47 @@ public class Sign_in extends AppCompatActivity {
     EditText editTextPassword;
     FirebaseUser firebaseUser;
     User user;
+
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
         firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("user");
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(firebaseUser != null){
+            String userId = firebaseUser.getUid();
+            databaseReference.child(userId).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    user = dataSnapshot.getValue(User.class);
+                    Intent i;
+                    if(user.getUser_type().equals("renter")){
+                        i = new Intent(getApplicationContext(),RenterHome.class);
+                        finish();
+                        startActivity(i);
+
+                    }
+                    else if(user.getUser_type().equals("owner")){
+                        i = new Intent(getApplicationContext(),OwnerHome.class);
+
+                        finish();
+                        startActivity(i);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
+        setContentView(R.layout.sign_in_new);
+
+
         progressDialog = new ProgressDialog(this);
         loginAuth = FirebaseAuth.getInstance();
         sign_inButton = (Button) findViewById(R.id.buttonSignIn);
@@ -57,9 +92,7 @@ public class Sign_in extends AppCompatActivity {
         });
 
             TextView textViewSignUp = (TextView) findViewById(R.id.signuptext);
-            SpannableString content = new SpannableString("SIGN UP");
-            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-            textViewSignUp.setText(content);
+
 
         textViewSignUp.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -100,14 +133,14 @@ public class Sign_in extends AppCompatActivity {
                             if(user.getUser_type().equals("renter")){
                                 //renter
                                 Intent i = new Intent(getApplicationContext(),RenterHome.class);
-                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                                 finish();
                                 startActivity(i);
                                 progressDialog.dismiss();
                             }else if(user.getUser_type().equals("owner")){
                                 //owner
                                 Intent i = new Intent(getApplicationContext(),OwnerHome.class);
-                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                                 finish();
                                 startActivity(i);
                                 progressDialog.dismiss();

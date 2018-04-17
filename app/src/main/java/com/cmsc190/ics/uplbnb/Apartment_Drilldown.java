@@ -53,6 +53,7 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
     public static RatingBar rating;
     public static ImageView headPhoto;
     public static ImageButton editEstablishmentBtn;
+    public static TextView establishmentType;
     private DatabaseReference databaseReference;
     public static Apartment_Item e;
     StorageReference headerReference;
@@ -111,11 +112,11 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState) {
 
 
-        View view =  inflater.inflate(R.layout.fragment_establishment__drilldown,container,false);
+        View view =  inflater.inflate(R.layout.fragment_apartment_drilldown,container,false);
         //Establishment_Item e = (Establishment_Item) getArguments().getSerializable("e");
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
-
+        establishmentType = (TextView)view.findViewById(R.id.drilldownApartmentType);
         editEstablishmentBtn = (ImageButton)view.findViewById(R.id.editEstablishmentBtn);
         editEstablishmentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,7 +166,7 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
                     addressLat = e.getLatitude();
                     addressLong = e.getLongitude();
                     rating.setRating(e.getRating());
-
+                    establishmentType.setText("Apartment");
                     establishmentName.setText(e.getEstablishmentName());
                     establishmentAddress.setText(e.getAddress());
 
@@ -177,21 +178,32 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
 
                     priceRange.setText(e.getPrice() + " PHP");
                     if(e.isBillsIncludedInRate() == true){
-                        priceRange.append(",bills included");
+                        priceRange.append(", bills included");
                     }
                     else{
-                        priceRange.append(",bills not included");
+                        priceRange.append(", bills not included");
                     }
 
-                    curfewHours.setText(e.getCurfewHours());
+                    if(e.getCurfewHours().equals("-")){
+                        curfewHours.setText("No curfew hours");
+                    }
+                    else{
+                        curfewHours.setText(e.getCurfewHours());
+                    }
+
 
                     if(e.isVisitorsAllowed() == true){
-                        visitorsAllowed.setText("Yes");
+                        visitorsAllowed.setText("Visitors allowed");
                     }else {
-                        visitorsAllowed.setText("No");
+                        visitorsAllowed.setText("No visitors allowed");
+                    }
+                    if(e.getDistanceFromCampus() >= 1000){
+                        distanceFromCampus.setText(Math.floor((e.getDistanceFromCampus()/1000)) + "km");
+                    }
+                    else{
+                        distanceFromCampus.setText(Math.floor(e.getDistanceFromCampus()) + "m");
                     }
 
-                    distanceFromCampus.setText(e.getDistanceFromCampus() + "m");
 
                     if(e.isSecurity() == true){
                         security.setText("Security measures implemented");
@@ -200,7 +212,7 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
                         security.setText("No security measures implemented");
                     }
 
-                    rentYears.setText(e.getRentYears()+" ");
+                    rentYears.setText(e.getRentYears()+" years");
 
 
 
@@ -214,6 +226,7 @@ public class Apartment_Drilldown extends Fragment implements View.OnClickListene
                     headerReference = storageReference.child("establishments/"+e.getId());
                     GlideApp.with(getActivity())
                             .load(headerReference)
+                            .placeholder(R.drawable.logo2)
                             .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
                             .into(headPhoto);
                     initUser();

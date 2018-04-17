@@ -1,5 +1,7 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.app.ActionBar;
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -7,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.content.Intent;
@@ -34,11 +39,13 @@ public class OwnerHome extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private List<Establishment_Item> establishment_items;
     FloatingActionButton fab;
+    ActionBar actionBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        actionBar = getActionBar();
         setContentView(R.layout.activity_owner_home);
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseUserId = firebaseUser.getUid();
@@ -90,10 +97,49 @@ public class OwnerHome extends AppCompatActivity {
         });
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.renter_home, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.Logout:
+                logout();
+                return true;
+            case R.id.SUS:
+                SUS();
+                return true;
+            case R.id.Manual:
+                manual();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void logout(){
+        FirebaseAuth.getInstance().signOut();
+        finish();
+        Intent i = new Intent(getApplicationContext(),Sign_in.class);
+        startActivity(i);
+    }
+    public void SUS(){}
+    public void manual(){}
 
     public void addEstablishment(){
         Intent i = new Intent(getApplicationContext(),AddEstablishment.class);
         startActivity(i);
+    }
+
+    @Override
+    public void onBackPressed(){
+        DialogFragment newFragment = new QuitApplicationDialogFragment();
+        newFragment.show(getFragmentManager(), "Quit");
     }
 
 }

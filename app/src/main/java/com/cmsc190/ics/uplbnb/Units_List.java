@@ -74,7 +74,7 @@ public class Units_List extends Fragment implements View.OnClickListener {
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerViewUnitList);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        addUnitFab = (Button)view.findViewById(R.id.addUnitButton);
+        addUnitFab = (Button) view.findViewById(R.id.addUnitButton);
         addUnitFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

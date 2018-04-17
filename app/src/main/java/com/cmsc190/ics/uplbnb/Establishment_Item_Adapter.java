@@ -19,6 +19,8 @@ import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +45,7 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.establishment_item,parent,false);
+                .inflate(R.layout.establishment_item_2,parent,false);
         return new ViewHolder(v);
     }
 
@@ -57,6 +59,9 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
         headerReference = storageReference.child("establishments/"+establishment.getId());
         GlideApp.with(context)
                 .load(headerReference)
+                .placeholder(R.drawable.logo2)
+                .centerCrop()
+                .override(300)
                 .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
                 .into(holder.thumbnail);
         /*if(e.getEstablishmentType() == 1){
@@ -75,7 +80,7 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
 
         float rating = establishment.getRating();
         holder.ratingBarEstablishment.setRating(rating);
-
+        holder.establishmentPrice.setText(establishment.getPrice());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,6 +125,7 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
 
          public TextView textViewEstablishmentName;
          public TextView establishmentCategory;
+         public TextView establishmentPrice;
          public RatingBar ratingBarEstablishment;
          ImageView thumbnail;
 
@@ -129,6 +135,7 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
             textViewEstablishmentName = (TextView) itemView.findViewById(R.id.establishment_item_name);
             establishmentCategory = (TextView) itemView.findViewById(R.id.establishment_item_category);
             ratingBarEstablishment = (RatingBar) itemView.findViewById(R.id.establishment_item_rating);
-        }
+            establishmentPrice = (TextView) itemView.findViewById(R.id.establishment_item_price);
+         }
     }
 }

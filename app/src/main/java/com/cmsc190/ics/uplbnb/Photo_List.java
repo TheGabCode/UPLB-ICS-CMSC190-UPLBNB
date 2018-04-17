@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,6 +113,7 @@ public class Photo_List  extends Fragment {
 
             }
         });
+        savePhotoBtn.setVisibility(View.GONE);
         String establishmentId = getArguments().getString("establishmentId");
         adapter = new Photo_Item_Adapter(photo_items,getActivity(),establishmentId);
         recyclerView.setAdapter(adapter);
@@ -120,9 +122,12 @@ public class Photo_List  extends Fragment {
 
 
     public  void deletePhoto(View v){
-        photoList.removeView((View)v.getParent());
         int remove = photoList.indexOfChild((View)v.getParent());
+        photoList.removeView((View)v.getParent());
         uris.remove(remove);
+        if(photoList.getChildCount() == 0){
+            savePhotoBtn.setVisibility(View.GONE);
+        }
     }
 
     public void saveImages(){
@@ -159,6 +164,7 @@ public class Photo_List  extends Fragment {
 
 
         }
+        savePhotoBtn.setVisibility(View.GONE);
         saveUrisToDatabase();
 
     }
@@ -170,6 +176,7 @@ public class Photo_List  extends Fragment {
             imageRef = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("picture").push();
             imageRef.setValue(uris.get(i).getLastPathSegment());
         }
+        photoList.removeAllViews();
     }
     public void selectImage(){
         Intent intent = new Intent();
@@ -210,6 +217,7 @@ public class Photo_List  extends Fragment {
                         .into(retrievedImage);
 
                 photoList.addView(uploadedPictureView);
+                savePhotoBtn.setVisibility(View.VISIBLE);
                 uris.add(filePath); //add compressed bitmap to array list for firebase storage upload
             }
             catch (IOException e)
