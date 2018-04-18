@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
+import static com.cmsc190.ics.uplbnb.Establishment_Drilldown.e;
 
 /**
  * Created by Dell on 15 Apr 2018.
@@ -65,6 +68,48 @@ public class Photo_List  extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     List<String> photo_items;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference userRef;
+    FirebaseUser firebaseUser;
+    User user;
+
+    public void initUser(){
+        userRef = firebaseDatabase.getInstance().getReference();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = firebaseUser.getUid();
+        Log.d("User id","User id " + userId);
+        userRef.child("user").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                if(firebaseUser == null){
+                    addPhotoBtn.setVisibility(View.GONE);
+                }else{
+                    if(user != null){
+                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                            addPhotoBtn.setVisibility(View.GONE);
+                        }
+                        else if(user.getId().equals(e.getOwner_id())){
+                            addPhotoBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else{
+                        Log.d("User id",firebaseUser.getUid());
+                    }
+
+                }
+                Log.d("User id","XXX" + user.getFullname());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
     public Photo_List(){
 
     }
@@ -86,7 +131,7 @@ public class Photo_List  extends Fragment {
                 photo_items.clear();
                 e = dataSnapshot.getValue(Establishment_Item.class);
                 getPhotos(e);
-                adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId());
+                adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId(),"",true);
                 recyclerView.setAdapter(adapter);
             }
 
@@ -105,6 +150,8 @@ public class Photo_List  extends Fragment {
                 selectImage();
             }
         });
+        addPhotoBtn.setVisibility(View.GONE);
+        initUser();
         savePhotoBtn = (Button)view.findViewById(R.id.savePhotoBtn);
         savePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +162,7 @@ public class Photo_List  extends Fragment {
         });
         savePhotoBtn.setVisibility(View.GONE);
         String establishmentId = getArguments().getString("establishmentId");
-        adapter = new Photo_Item_Adapter(photo_items,getActivity(),establishmentId);
+        adapter = new Photo_Item_Adapter(photo_items,getActivity(),establishmentId,"",true);
         recyclerView.setAdapter(adapter);
         return view;
     }
@@ -164,7 +211,7 @@ public class Photo_List  extends Fragment {
 
 
         }
-        savePhotoBtn.setVisibility(View.GONE);
+
         saveUrisToDatabase();
 
     }

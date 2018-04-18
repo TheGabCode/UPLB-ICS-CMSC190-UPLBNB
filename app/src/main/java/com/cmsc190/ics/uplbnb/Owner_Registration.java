@@ -35,6 +35,7 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
     private EditText editTextFirstName;
     private EditText editTextLastName;
     private EditText editTextNumber;
+    private EditText editTextNumber2;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
@@ -54,6 +55,7 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
         editTextFirstName = (EditText) view.findViewById(R.id.editTextRegFirstNameOwner);
         editTextLastName = (EditText) view.findViewById(R.id.editTextRegLastNameOwner);
         editTextNumber = (EditText) view.findViewById(R.id.editTextRegNumberOwner);
+        editTextNumber2 = (EditText)view.findViewById(R.id.editTextRegAltNumberOwner);
         buttonRegister.setOnClickListener(this);
         return view;
     }
@@ -66,6 +68,7 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
         final String first_name = editTextFirstName.getText().toString().trim();
         final String last_name = editTextLastName.getText().toString().trim();
         final String number = editTextNumber.getText().toString().trim();
+        final String number2 = editTextNumber2.getText().toString().trim();
         if(TextUtils.isEmpty(email)){
             Toast.makeText(getActivity(), "Please enter email.",Toast.LENGTH_SHORT).show();
             return;
@@ -86,6 +89,10 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
             Toast.makeText(getActivity(),"Please enter number.",Toast.LENGTH_SHORT).show();
             return;
         }
+        if(TextUtils.isEmpty(number2)){
+            Toast.makeText(getActivity(),"Please enter an alternate contact number.",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         progressDialog.setMessage("Registering Owner...");
         progressDialog.show();
@@ -101,7 +108,7 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
                                     if(task.isSuccessful()){
                                         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                                         String id = firebaseUser.getUid();
-                                        User new_user = new User(email,password,first_name,last_name,"owner",number,id);
+                                        User new_user = new User(email,password,first_name,last_name,"owner",number,id,number2);
                                         databaseReference.child("user").child(id).setValue(new_user);
                                         progressDialog.dismiss();
                                         Toast.makeText(getActivity(),"Owner successfully registered!",Toast.LENGTH_SHORT).show();

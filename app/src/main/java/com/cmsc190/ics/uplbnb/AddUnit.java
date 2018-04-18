@@ -1,6 +1,9 @@
 package com.cmsc190.ics.uplbnb;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -17,22 +21,36 @@ import android.content.Intent;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+
+import static java.security.AccessController.getContext;
 
 public class AddUnit extends AppCompatActivity {
     ImageView unitImagePreview;
     Button uploadImageBtn;
+    FirebaseStorage firebaseStorage;
+    StorageReference storageReference;
     EditText unitIdentifierText;
     EditText unitRate;
     EditText unitCapacity;
@@ -41,17 +59,24 @@ public class AddUnit extends AppCompatActivity {
     Spinner conditionSpinner;
     Button submitUnitBtn;
     Button addFurnitureBtn;
+    Button addPictureBtn;
     Intent intent;
     LinearLayout unitFurnitureContainer;
     LinearLayout dormitoryAttributes;
     LinearLayout apartmentAttributes;
     LinearLayout dormitoryFurnitureAttributes;
+    LinearLayout photoList;
+    private final int PICK_IMAGE_REQUEST = 71;
     Establishment_Item e;
+    Uri filePath;
+    List<Uri> uris = new ArrayList<Uri>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         intent = getIntent();
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
 
         int establishmentType   = intent.getIntExtra("establishmentType",1);
         if(establishmentType == 1){
@@ -66,12 +91,19 @@ public class AddUnit extends AppCompatActivity {
         dormitoryFurnitureAttributes = (LinearLayout)findViewById(R.id.addUnitDormitoryFurnitureLayout);
 
 
-        unitImagePreview = (ImageView)findViewById(R.id.addUnitUploadPhotoPreview);
+        /*unitImagePreview = (ImageView)findViewById(R.id.addUnitUploadPhotoPreview);
         uploadImageBtn = (Button)findViewById(R.id.addUnitUploadImageBtn);
+        */
         unitIdentifierText = (EditText)findViewById(R.id.addUnitIdentifier);
         unitRate = (EditText)findViewById(R.id.addUnitPrice);
         unitCapacity = (EditText)findViewById(R.id.addUnitCapacity);
-
+        addPictureBtn = findViewById(R.id.addUnitPictureBtn);
+        addPictureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectImage();
+            }
+        });
 
         unitSlotsAvailable = (EditText)findViewById(R.id.addUnitDormitoryAvailableSlots);
         statusSpinner = (Spinner)findViewById(R.id.apartmentStatusSpinner);
@@ -106,6 +138,7 @@ public class AddUnit extends AppCompatActivity {
             unitCapacity.setText(((Dormitory_Item)e).getCapacityPerUnit()+"");
             initializeFurniture(e);
         }
+        photoList = (LinearLayout)findViewById(R.id.uploadedPhotoContainer);
     }
 
     public void initializeFurniture(Establishment_Item e){
@@ -241,35 +274,14 @@ public class AddUnit extends AppCompatActivity {
 
         }
 
-/*        if(establishmentType == 1){
-            if(TextUtils.isEmpty(unitRate.getText().toString().trim())){
-                Toast.makeText(getApplication(),"Please fill in unit rate.",Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        else{
-            if(TextUtils.isEmpty(unitRate.getText().toString().trim())){
-                Toast.makeText(getApplication(),"Please fill in unit rate.",Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if(TextUtils.isEmpty(unitCapacity.getText().toString().trim())){
-                Toast.makeText(getApplication(),"Please fill in unit capacity.",Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if(TextUtils.isEmpty(unitSlotsAvailable.getText().toString().trim())){
-                Toast.makeText(getApplication(),"Please fill in unit slots available.",Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }*/
-
 
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("unit").push();
         id = databaseReference.getKey();
+        HashMap<String,String> pictures = new HashMap<String,String>();
 
-
-        Unit_Item unit = new Unit_Item(unitIdentifier, open, slotsAvailable, rate, id,  condition, furniture, ratePerHead,capacity);
+        Unit_Item unit = new Unit_Item(unitIdentifier, open, slotsAvailable, rate, id,  condition, furniture, ratePerHead,capacity,pictures);
         databaseReference.setValue(unit);
-
+        saveImages(id);
         DatabaseReference unitRef = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("numUnitsAvailable");
         unitRef.setValue(countOpenUnits(e));
 
@@ -291,5 +303,130 @@ public class AddUnit extends AppCompatActivity {
         }
         return totalOpen;
     }
+
+    public void selectImage(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE); //creates upload previews
+            View uploadedPictureView = inflater.inflate(R.layout.preview_uploaded_image,null);
+            ImageView retrievedImage = (ImageView)uploadedPictureView.findViewById(R.id.establishmentAddPhoto);
+            ImageButton deletePhotoBtn = (ImageButton)uploadedPictureView.findViewById(R.id.deletePhoto);
+            deletePhotoBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deletePhoto(v);
+                }
+            });
+            filePath = data.getData();
+            //uriList.add(filePath);
+            try {
+                Bitmap bitmap = decodeUri(getApplicationContext(),filePath,200); //compression
+/*                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data1 = baos.toByteArray();*/
+                /*retrievedImage.setImageBitmap(bitmap);*/
+                GlideApp.with(getApplicationContext()) //load compressed image to image views for preview
+                        .load(bitmap)
+                        .centerCrop()
+                        .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+                        .into(retrievedImage);
+
+                photoList.addView(uploadedPictureView);
+                uris.add(filePath); //add compressed bitmap to array list for firebase storage upload
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Bitmap decodeUri(Context c, Uri uri, final int requiredSize)
+            throws FileNotFoundException {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o);
+
+        int width_tmp = o.outWidth
+                , height_tmp = o.outHeight;
+        int scale = 1;
+
+        while(true) {
+            if(width_tmp / 2 < requiredSize || height_tmp / 2 < requiredSize)
+                break;
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, o2);
+    }
+
+    public void saveUrisToDatabase(String id){
+        DatabaseReference imageRef;
+        for(int i = 0; i < uris.size(); i++){
+            imageRef = FirebaseDatabase.getInstance().getReference("establishment").child(e.getId()).child("unit").child(id).child("pictures").push();
+            imageRef.setValue(uris.get(i).getLastPathSegment());
+        }
+    }
+
+    public  void deletePhoto(View v){
+        int remove = photoList.indexOfChild((View)v.getParent());
+        photoList.removeView((View)v.getParent());
+        uris.remove(remove);
+
+    }
+
+    public void saveImages(String id){
+        Toast.makeText(getApplicationContext(),uris.size()+" " +e.getEstablishmentName(),Toast.LENGTH_SHORT).show();
+        if(uris.size() > 0){
+            StorageReference ref;
+            ByteArrayOutputStream baos;
+            byte[] data1 = null;
+            String uploadId;
+
+            for(int i = 0; i < uris.size(); i++){
+                baos = new ByteArrayOutputStream();
+                try{
+                    Bitmap bitmap = decodeUri(getApplicationContext(),uris.get(i),400);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    data1 = baos.toByteArray();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+
+
+                final int cnt = i;
+                ref = storageReference.child("units/"+id+"/"+uris.get(i).getLastPathSegment());
+                ref.putBytes(data1).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getApplicationContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+            }
+
+
+        }
+
+        saveUrisToDatabase(id);
+
+    }
+
 
 }

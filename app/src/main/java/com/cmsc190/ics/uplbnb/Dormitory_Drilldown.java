@@ -208,7 +208,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                 furnitureAvailable.setText(stringifyFurniture(e.getAvailableFurniture()));
                 capacityPerUnit.setText(e.getCapacityPerUnit() + " persons");
                 headerReference = storageReference.child("establishments/"+e.getId());
-                GlideApp.with(getActivity())
+                GlideApp.with(getContext())
                         .load(headerReference)
                         .placeholder(R.drawable.logo2)
                         .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))

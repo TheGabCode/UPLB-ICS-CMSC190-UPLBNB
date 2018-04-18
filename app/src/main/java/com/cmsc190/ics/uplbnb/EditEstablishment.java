@@ -373,7 +373,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
             databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
-       // finish();
+       finish();
 
     }
     @Override

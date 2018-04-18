@@ -17,12 +17,13 @@ public class Unit_Item implements Serializable{
     private boolean ratePerHead; //for dormitories
     private String id;
     public HashMap<String,Integer> furniture; //for dormitories
+    public HashMap<String,String> pictures;
 
     public Unit_Item(){
 
     }
 
-    public Unit_Item(String unitIdentifier, int status, int slotsAvailable, double rate, String id, int condition, HashMap<String,Integer> furniture,boolean ratePerHead, int capacity) {
+    public Unit_Item(String unitIdentifier, int status, int slotsAvailable, double rate, String id, int condition, HashMap<String,Integer> furniture,boolean ratePerHead, int capacity, HashMap<String,String> pictures) {
         this.unitIdentifier = unitIdentifier;
         this.status = status;
         this.slotsAvailable = slotsAvailable;
@@ -32,6 +33,7 @@ public class Unit_Item implements Serializable{
         this.furniture = furniture;
         this.ratePerHead = ratePerHead;
         this.capacity = capacity;
+        this.pictures = pictures;
     }
 
     public String getUnitIdentifier() {
@@ -43,6 +45,10 @@ public class Unit_Item implements Serializable{
     }
     public HashMap<String,Integer> getFurniture(){
         return this.furniture;
+    }
+
+    public HashMap<String,String> getPictures(){
+        return this.pictures;
     }
 
     public int getStatus() {

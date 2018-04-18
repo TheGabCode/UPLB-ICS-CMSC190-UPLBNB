@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 public class Establishment_Drilldown extends AppCompatActivity {
     Intent i;
+    public static Establishment_Item e;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -68,6 +69,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
 
@@ -119,11 +121,12 @@ public class Establishment_Drilldown extends AppCompatActivity {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+
         }
 
         @Override
         public Fragment getItem(int position) {
-            Establishment_Item e = (Establishment_Item)i.getSerializableExtra("establishment");;
+            e = (Establishment_Item)i.getSerializableExtra("establishment");;
             switch(position){
                 case 0: //overview
                     if(e.getEstablishmentType() == 1){
@@ -145,7 +148,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     return null;
 
                 case 1: //units
-                    Units_List u1 = new Units_List();
+                    final Units_List u1 = new Units_List();
                     Bundle args3 = new Bundle();
                     args3.putString("establishmentId",e.getId());
                     args3.putInt("establishmentType",e.getEstablishmentType());
@@ -154,20 +157,23 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     return u1;
 
                 case 2:
-                    Reviews_List r1 = new Reviews_List();
+                    final Reviews_List r1 = new Reviews_List();
                     Bundle args4 = new Bundle();
                     args4.putString("establishmentId",e.getId());
                     args4.putString("establishmentName",e.getEstablishmentName());
                     args4.putInt("establishmentType",e.getEstablishmentType());
                     args4.putFloat("establishmentRating",e.getRating());
                     r1.setArguments(args4);
+
                     return r1;
 
                 case 3:
-                    Photo_List p1 = new Photo_List();
+                    final Photo_List p1 = new Photo_List();
                     Bundle args5 = new Bundle();
                     args5.putString("establishmentId",e.getId());
                     p1.setArguments(args5);
+
+
                     return p1;
 
             }

@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.Intent;
 import android.widget.Button;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,6 +43,49 @@ public class Units_List extends Fragment implements View.OnClickListener {
     boolean ratePerHead;
     HashMap<String,Integer> furniture;
     Establishment_Item e;
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference userRef;
+    FirebaseUser firebaseUser;
+    User user;
+
+    public void initUser(){
+        userRef = firebaseDatabase.getInstance().getReference();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = firebaseUser.getUid();
+        Log.d("User id","User id " + userId);
+        userRef.child("user").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user = dataSnapshot.getValue(User.class);
+                if(firebaseUser == null){
+                    addUnitFab.setVisibility(View.GONE);
+                }else{
+                    if(user != null){
+                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                            addUnitFab.setVisibility(View.GONE);
+                        }
+                        else if(user.getId().equals(e.getOwner_id())){
+                            addUnitFab.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    else{
+                        Log.d("User id",firebaseUser.getUid());
+                    }
+
+                }
+                Log.d("User id","XXX" + user.getFullname());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
     public void getEstablishmentData(String establishmentId, final int establishmentType){
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("establishment");
         ref.child(establishmentId).addValueEventListener(new ValueEventListener() {
@@ -47,9 +93,11 @@ public class Units_List extends Fragment implements View.OnClickListener {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(establishmentType == 1){
                     e = dataSnapshot.getValue(Apartment_Item.class);
+                    initUser();
                 }
                 else{
                     e = dataSnapshot.getValue(Dormitory_Item.class);
+                    initUser();
                 }
             }
 
@@ -67,7 +115,7 @@ public class Units_List extends Fragment implements View.OnClickListener {
         contactNumber1 = getArguments().getString("establishmentContact");
         establishmentType = getArguments().getInt("establishmentType");
         establishmentId = getArguments().getString("establishmentId");
-        getEstablishmentData(establishmentId,establishmentType);
+
 /*        ratePerHead = getArguments().getBoolean("ratePerHead");
         furniture = (HashMap<String,Integer>)getArguments().getSerializable("furniture");*/
         refUnits = FirebaseDatabase.getInstance().getReference("establishment");
@@ -81,10 +129,12 @@ public class Units_List extends Fragment implements View.OnClickListener {
                 addUnit();
             }
         });
+        getEstablishmentData(establishmentId,establishmentType);
         unit_items = new ArrayList<>();
         adapter = new Unit_Item_Adapter(unit_items,getActivity(),contactNumber1,establishmentType,establishmentId);
 
         recyclerView.setAdapter(adapter);
+        addUnitFab.setVisibility(View.GONE);
         addUnitFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -26,15 +26,20 @@ import java.util.List;
 
 public class Photo_Item_Adapter extends RecyclerView.Adapter<Photo_Item_Adapter.ViewHolder> {
 
-    public Photo_Item_Adapter(List<String> photo_urls, Context context,String establishmentId) {
+    public Photo_Item_Adapter(List<String> photo_urls, Context context,String establishmentId, String unitId, boolean establishmentAdapter) {
         this.photo_urls = photo_urls;
         this.context = context;
         this.establishmentId = establishmentId;
+        this.unitId = unitId;
+        this.establishmentAdapter = establishmentAdapter;
+
 
     }
     List<String> photo_urls;
     Context context;
     String establishmentId;
+    String unitId;
+    boolean establishmentAdapter;
     FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     StorageReference storageReference = firebaseStorage.getReference() ;
     @Override
@@ -48,7 +53,14 @@ public class Photo_Item_Adapter extends RecyclerView.Adapter<Photo_Item_Adapter.
     public void onBindViewHolder(Photo_Item_Adapter.ViewHolder holder, int position) {
         final String photo_url = photo_urls.get(position);
 
-        StorageReference previewRef = storageReference.child("establishments/"+establishmentId+"/"+photo_url);
+        StorageReference previewRef = null;
+        if(this.establishmentAdapter == true){
+            previewRef = storageReference.child("establishments/"+establishmentId+"/"+photo_url);
+        }
+        else{
+            previewRef = storageReference.child("units/"+unitId+"/"+photo_url);
+
+        }
         GlideApp.with(context)
                 .load(previewRef)
                 .centerCrop()

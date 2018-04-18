@@ -91,6 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:text="Rate"
+                    android:layout_marginBottom="5dp"
                     android:textColor="#ef6c00"
                     android:textStyle="bold"/>
 

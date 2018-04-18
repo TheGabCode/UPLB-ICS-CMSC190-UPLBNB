@@ -101,7 +101,7 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
                                     if(task.isSuccessful()){
                                         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                                         String id = firebaseUser.getUid();
-                                        User new_user = new User(email,password,first_name,last_name,"renter","",id);
+                                        User new_user = new User(email,password,first_name,last_name,"renter","",id,"");
                                         databaseReference.child("user").child(id).setValue(new_user);
                                         progressDialog.dismiss();
                                         Toast.makeText(getActivity(),"Renter successfully registered!",Toast.LENGTH_SHORT).show();
