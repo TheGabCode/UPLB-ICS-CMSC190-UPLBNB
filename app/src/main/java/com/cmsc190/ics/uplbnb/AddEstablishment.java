@@ -170,8 +170,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
-//            progressDialog.show();
-
+            progressDialog.show();
             StorageReference ref;
             Bitmap bmp = null;
 
@@ -190,9 +189,9 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            progressDialog.dismiss();
+                            progressDialog.dismiss();
+                            finish();
 
-                            Toast.makeText(AddEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -215,6 +214,9 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
 
                 }*/
             }
+            else{
+            finish();
+        }
 
 
     }
@@ -365,7 +367,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
             databaseReference.setValue(newEstablishment);
         }
         saveImage(id);
-        finish();
+
 
     }
 

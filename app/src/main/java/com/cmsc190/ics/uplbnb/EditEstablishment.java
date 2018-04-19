@@ -181,8 +181,8 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         if(filePath != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
-            /*progressDialog.setTitle("Uploading...");
-            progressDialog.show();*/
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
             StorageReference ref = storageReference.child("establishments/"+ establishmentId);
 
             Bitmap bmp = null;
@@ -200,7 +200,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-              //              progressDialog.dismiss();
+                            progressDialog.dismiss();
                             Toast.makeText(EditEstablishment.this, "Uploaded", Toast.LENGTH_SHORT).show();
                             finish();
 
@@ -226,7 +226,9 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
 
                 }*/
         }
-
+        else{
+            finish();
+        }
 
     }
 
@@ -373,7 +375,6 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
             databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
-       finish();
 
     }
     @Override

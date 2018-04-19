@@ -2,10 +2,12 @@ package com.cmsc190.ics.uplbnb;
 
 import android.app.ActionBar;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -287,7 +289,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
     }
 
     public void saveImages(String id,String establishmentId){
-
+/*
         if(uris.size() > 0){
             StorageReference ref;
             ByteArrayOutputStream baos;
@@ -318,8 +320,8 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
             }
 
 
-        }
-
+        }*/
+        new ImageUploader().execute(id,null,null);
         saveUrisToDatabase(id,establishmentId);
 
     }
@@ -543,6 +545,65 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
             }
         }
         return totalOpen;
+    }
+
+    private class ImageUploader extends AsyncTask<String, Void, Void> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected Void doInBackground(String[] objects) {
+            if (uris.size() > 0) {
+                StorageReference ref;
+                ByteArrayOutputStream baos;
+                byte[] data1 = null;
+                String id = objects[0];
+                for (int i = 0; i < uris.size(); i++) {
+                    baos = new ByteArrayOutputStream();
+                    try {
+                        Bitmap bitmap = decodeUri(getApplication(), uris.get(i), 400);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        data1 = baos.toByteArray();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    final int cnt = i;
+                    ref = storageReference.child("units/" + id + "/" + uris.get(i).getLastPathSegment());
+                    ref.putBytes(data1).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                            Toast.makeText(getContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
+
+
+                        }
+                    });
+
+                }
+
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(EditUnit.this);
+            progressDialog.setMessage("Uploading");
+            progressDialog.show();
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            try{
+                progressDialog.dismiss();
+            }catch (Exception e){
+
+            }
+        }
+
     }
 
 }

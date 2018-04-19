@@ -1,12 +1,13 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -44,7 +45,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
-import static com.cmsc190.ics.uplbnb.Establishment_Drilldown.e;
 
 /**
  * Created by Dell on 15 Apr 2018.
@@ -177,41 +177,67 @@ public class Photo_List  extends Fragment {
         }
     }
 
-    public void saveImages(){
-        Toast.makeText(getContext(),uris.size()+" " +e.getEstablishmentName(),Toast.LENGTH_SHORT).show();
-        if(uris.size() > 0){
+    private class ImageUploader extends AsyncTask<Object,Void,Void> {
+        ProgressDialog progressDialog;
 
-            StorageReference ref;
-            ByteArrayOutputStream baos;
-            byte[] data1 = null;
-            String uploadId;
+        @Override
+        protected Void doInBackground(Object[] objects) {
+            if(uris.size() > 0){
+                StorageReference ref;
+                ByteArrayOutputStream baos;
+                byte[] data1 = null;
+                String uploadId;
+                for(int i = 0; i < uris.size(); i++){
+                    baos = new ByteArrayOutputStream();
+                    try{
+                        Bitmap bitmap = decodeUri(getContext(),uris.get(i),400);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        data1 = baos.toByteArray();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
 
-            for(int i = 0; i < uris.size(); i++){
-                baos = new ByteArrayOutputStream();
-                try{
-                    Bitmap bitmap = decodeUri(getContext(),uris.get(i),400);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                    data1 = baos.toByteArray();
-                }catch (IOException e){
-                    e.printStackTrace();
+
+                    final int cnt = i;
+                    ref = storageReference.child("establishments/"+establishmentId+"/"+uris.get(i).getLastPathSegment());
+                    ref.putBytes(data1).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(getContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
+
+
+                        }
+                    });
+
                 }
 
 
-                final int cnt = i;
-                ref = storageReference.child("establishments/"+establishmentId+"/"+uris.get(i).getLastPathSegment());
-                ref.putBytes(data1).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
             }
 
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(getContext());
+            progressDialog.setMessage("Uploading");
+            progressDialog.show();
 
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            try{
+                progressDialog.dismiss();
+            }catch (Exception e){
+
+            }
+        }
+    }
+
+    public void saveImages(){
+        savePhotoBtn.setVisibility(View.GONE);
+        new ImageUploader().execute(null,null,null);
         saveUrisToDatabase();
 
     }

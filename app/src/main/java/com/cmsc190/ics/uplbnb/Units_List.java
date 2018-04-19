@@ -61,12 +61,15 @@ public class Units_List extends Fragment implements View.OnClickListener {
                     addUnitFab.setVisibility(View.GONE);
                 }else{
                     if(user != null){
-                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
-                            addUnitFab.setVisibility(View.GONE);
+                        if(e != null){
+                            if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                                addUnitFab.setVisibility(View.GONE);
+                            }
+                            else if(user.getId().equals(e.getOwner_id())){
+                                addUnitFab.setVisibility(View.VISIBLE);
+                            }
                         }
-                        else if(user.getId().equals(e.getOwner_id())){
-                            addUnitFab.setVisibility(View.VISIBLE);
-                        }
+
                     }
                     else{
                         Log.d("User id",firebaseUser.getUid());
