@@ -73,6 +73,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
     Unit_Item unit;
     ActionBar actionBar;
     Uri filePath;
+    Context staticThis;
     DatabaseReference databaseReference;
     DatabaseReference unitRef;
     List<String> lastPathSegments = new ArrayList<String>();
@@ -80,7 +81,8 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
     private final int PICK_IMAGE_REQUEST = 71;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        
+        staticThis = this.getApplicationContext();
         super.onCreate(savedInstanceState);
         intent = getIntent();
         unit = (Unit_Item)intent.getSerializableExtra("unit");
@@ -152,6 +154,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
         unitIdentifierText.setText(unit.getUnitIdentifier());
         if(establishmentType == 1){
             unitRate.setText(unit.getRate()+"");
+            initializeUploadedPictures(unit);
         }else{
 
             unitRate.setText(unit.getRate()+"");
@@ -167,7 +170,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
     public void initializeFurniture(Unit_Item unit){
         HashMap<String,Integer> furniture = (HashMap<String,Integer>)unit.getFurniture();
         if(furniture != null){
-            Toast.makeText(getApplicationContext(),"Has furniture",Toast.LENGTH_SHORT).show();
+
             Iterator entries = furniture.entrySet().iterator();
             while (entries.hasNext()){
                 HashMap.Entry entry = (HashMap.Entry) entries.next();
@@ -177,7 +180,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
             }
         }
         else{
-            Toast.makeText(getApplicationContext(),"No furniture",Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -289,7 +292,6 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
     }
 
     public void saveImages(String id,String establishmentId){
-/*
         if(uris.size() > 0){
             StorageReference ref;
             ByteArrayOutputStream baos;
@@ -312,7 +314,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
                 ref.putBytes(data1).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getApplicationContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getApplicationContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -320,14 +322,14 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
             }
 
 
-        }*/
-        new ImageUploader().execute(id,null,null);
+        }
         saveUrisToDatabase(id,establishmentId);
+//        new ImageUploader().execute(id,null,null);
+
 
     }
     public void saveUrisToDatabase(String id,String eId){
         DatabaseReference imageRef;
-
         for(int i = 0; i < lastPathSegments.size(); i++){
             imageRef = FirebaseDatabase.getInstance().getReference("establishment").child(eId).child("unit").child(id).child("pictures").push();
             imageRef.setValue(lastPathSegments.get(i));
@@ -381,9 +383,23 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
 
     public void deleteUnit(){
         String eId = intent.getStringExtra("establishmentId");
-        Toast.makeText(getApplicationContext(),"Delete",Toast.LENGTH_SHORT).show();
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").child(eId).child("unit");
         databaseReference.child(unit.getId()).removeValue();
+        databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
+        databaseReference.child(eId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Establishment_Item e = dataSnapshot.getValue(Establishment_Item.class);
+                DatabaseReference updateRef = FirebaseDatabase.getInstance().getReference("establishment").child(e.getId()).child("numUnitsAvailable");
+                updateRef.setValue(countOpenUnits(e));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 
@@ -425,7 +441,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
         HashMap<String,Integer> furniture = new HashMap<>();
         double rate;
 
-        boolean ratePerHead = false;
+        boolean ratePerHead = unit.isRatePerHead();
         if(TextUtils.isEmpty(unitIdentifierText.getText().toString().trim())){
             Toast.makeText(getApplication(),"Please fill in the unit identifier.",Toast.LENGTH_SHORT).show();
             return;
@@ -472,7 +488,7 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
                 return;
             }
             slotsAvailable = Integer.parseInt(unitSlotsAvailable.getText().toString().trim());
-            ratePerHead = intent.getBooleanExtra("ratePerHead",false);
+
             if(slotsAvailable > 0){
                 open = 1;
             }else{
@@ -589,16 +605,19 @@ public class EditUnit extends AppCompatActivity implements ConfirmDeleteDialogFr
 
         @Override
         protected void onPreExecute() {
-            progressDialog = new ProgressDialog(EditUnit.this);
+
+/*            progressDialog = new ProgressDialog(EditUnit.this);
             progressDialog.setMessage("Uploading");
-            progressDialog.show();
+            progressDialog.show();*/
 
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             try{
-                progressDialog.dismiss();
+  /*              progressDialog.dismiss();
+                progressDialog = null;
+  */              saveUrisToDatabase(unit.getId(),intent.getStringExtra("establishmentId"));
             }catch (Exception e){
 
             }

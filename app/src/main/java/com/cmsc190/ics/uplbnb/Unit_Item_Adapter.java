@@ -7,10 +7,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.content.Intent;
 import android.widget.Toast;
+
+import com.bumptech.glide.signature.ObjectKey;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -33,6 +38,8 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
     int establishmentType;
     String establishmentContactNumber2;
     String establishmentId;
+    FirebaseStorage firebaseStorage;
+    StorageReference storageReference;
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -42,7 +49,21 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
+
         final Unit_Item unit = unit_items.get(position);
+        if(unit.pictures != null){
+            String firstKey = (String)unit.pictures.keySet().toArray()[0];
+            String url = unit.pictures.get(firstKey);
+            StorageReference thumbnailRef = storageReference.child("units/"+unit.getId()+"/"+url);
+            GlideApp.with(context)
+                    .load(thumbnailRef)
+                    .placeholder(R.drawable.logo2)
+                    .centerCrop()
+                    .override(300)
+                    .into(holder.unitImage);
+        }
 
         holder.unitIdentifier.setText(unit.getUnitIdentifier());
         holder.unitRate.setText(unit.getRate() + " PHP");
@@ -55,7 +76,13 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
         if(unit.getSlotsAvailable() == -1){
             holder.unitAvailableSlot.setVisibility(View.INVISIBLE);
         }else{
-            holder.unitAvailableSlot.setText(unit.getSlotsAvailable() + " slot(s) available");
+            if(unit.getSlotsAvailable() != 1){
+                holder.unitAvailableSlot.setText(unit.getSlotsAvailable() + " slots available");
+            }
+            else{
+                holder.unitAvailableSlot.setText(unit.getSlotsAvailable() + " slot available");
+            }
+
         }
         /*if(e.getEstablishmentType() == 1){
             e = (Apartment_Item)e;
@@ -96,14 +123,14 @@ public class Unit_Item_Adapter extends RecyclerView.Adapter<Unit_Item_Adapter.Vi
         public TextView unitStatus;
         public TextView unitRate;
         public TextView unitAvailableSlot;
-
+        ImageView unitImage;
         public ViewHolder(View itemView) {
             super(itemView);
             unitIdentifier = (TextView)itemView.findViewById(R.id.unitIdentifier);
             unitStatus = (TextView)itemView.findViewById(R.id.unitStatus);
             unitRate = (TextView)itemView.findViewById(R.id.unitRate);
             unitAvailableSlot = (TextView)itemView.findViewById(R.id.unitSlotsAvailable);
-
+            unitImage = itemView.findViewById(R.id.unitImage);
         }
     }
 }

@@ -62,14 +62,14 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     ArrayList<String> photo_items;
     Intent i;
-    ActionBar toolbar;
     Unit_Item unit;
     DatabaseReference ref;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference userRef;
     FirebaseUser firebaseUser;
     User user;
-
+    ActionBar actionBar;
+/*
     public void initUser(){
         userRef = firebaseDatabase.getInstance().getReference();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -83,10 +83,10 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
                     editButton.setVisibility(View.GONE);
                 }else{
                     if(user != null){
-                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                        if(user.getUser_type().equals("renter") || (!user.getId().equals(e.getOwner_id()) && !user.getUser_type().equals("admin"))){
                             editButton.setVisibility(View.GONE);
                         }
-                        else if(user.getId().equals(e.getOwner_id())){
+                        else if(user.getId().equals(e.getOwner_id()) || user.getUser_type().equals("admin")){
                             editButton.setVisibility(View.VISIBLE);
                         }
                     }
@@ -107,6 +107,7 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
 
 
     }
+*/
 
 
 
@@ -161,7 +162,7 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
         photo_items = new ArrayList<String>();
         editButton = (ImageButton)findViewById(R.id.unitDrilldownEditBtn);
         editButton.setVisibility(View.GONE);
-        initUser();
+        /*initUser()*/;
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -169,6 +170,7 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
             }
         });
   /*      photosContainer = findViewById(R.id.photosContainer);*/
+
         ref = FirebaseDatabase.getInstance().getReference("establishment").child(eId).child("unit").child(uId);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -179,8 +181,10 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
                     finish();
                     return;
                 }
+
                 unitIdentifier.setText(unit.getUnitIdentifier());
                 if(unit.getSlotsAvailable() == -1){
+                    setTitle("Apartment Unit");
                     ll.setVisibility(View.GONE);
                     dormCapacityLayout.setVisibility(View.GONE);
                     dormSlotsLayout.setVisibility(View.GONE);
@@ -190,9 +194,16 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
                         unitDrilldownCondition.setText("Furnished");
                     }
                 }else{ //if dormitory
+                    setTitle("Dormitory Unit");
                     apartmentConditionLayout.setVisibility(View.GONE);
-                    unitDrilldownCapacity.setText(unit.getCapacity() + " persons");
-                    unitDrilldownSlotsAvailable.setText(unit.getSlotsAvailable() + " slots available out of " + unit.getCapacity());
+                    unitDrilldownCapacity.setText(unit.getCapacity() + " person capacity");
+                    if(unit.getSlotsAvailable() != 1){
+                        unitDrilldownSlotsAvailable.setText(unit.getSlotsAvailable() + " slots available out of " + unit.getCapacity());
+                    }
+                    else{
+                        unitDrilldownSlotsAvailable.setText(unit.getSlotsAvailable() + " slot available out of " + unit.getCapacity());
+                    }
+
                     furnitureItems.setText(stringifyFurniture(unit.getFurniture()));
                 }
 
@@ -208,8 +219,46 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
                     unitDrilldownStatus.setText("Closed");
                 }
                 initializeUploadedPictures(unit);
-                adapter = new Photo_Item_Adapter(photo_items,getApplicationContext(),eId,unit.getId(),false);
-                recyclerView.setAdapter(adapter);
+                final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                userRef = FirebaseDatabase.getInstance().getReference("user");
+                userRef.child(fUser.getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User randUser = dataSnapshot.getValue(User.class);
+                        if(fUser == null){
+                            editButton.setVisibility(View.GONE);
+                        }else{
+                            if(randUser != null){
+                                if(randUser.getUser_type().equals("renter") || (!randUser.getId().equals(e.getOwner_id()) && !randUser.getUser_type().equals("admin")) ){
+                                    editButton.setVisibility(View.GONE);
+                                }
+                                else if(randUser.getId().equals(e.getOwner_id()) || randUser.getUser_type().equals("admin")){
+                                    editButton.setVisibility(View.VISIBLE);
+
+                                }
+                            }
+                            else{
+
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+
+                /*                    adapter = new Photo_Item_Adapter(photo_items,getApplicationContext(),eId,unit.getId(),false,0);
+
+
+
+
+                recyclerView.setAdapter(adapter);*/
             }
 
             @Override
@@ -263,6 +312,8 @@ public class ApartmentUnitDrilldown extends AppCompatActivity {
                 photo_items.add(value);
             }
         }
+        adapter = new Unit_Photo_Item_Adapter(photo_items,getApplicationContext(),unit.getId());
+        recyclerView.setAdapter(adapter);
     }
 
 /*    public void loadIntoView(String lastPathSegment,String unitId){

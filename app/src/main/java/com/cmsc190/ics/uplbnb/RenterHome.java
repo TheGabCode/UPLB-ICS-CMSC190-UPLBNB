@@ -3,6 +3,7 @@ package com.cmsc190.ics.uplbnb;
 import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,7 +41,9 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refEstablishments;
     ActionBar mainActionBar;
-
+    boolean isFiltered = false;
+    FilterInfo filterInfo = null;
+    List<Establishment_Item> filtered_establishment_items = new ArrayList<Establishment_Item>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +72,7 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
 
                 }
                 Collections.sort(establishment_items, new EstablishmentNameComparatorAscending());
-                Establishment_Item_Adapter e_adapter = new Establishment_Item_Adapter(establishment_items, getApplicationContext());
+                Establishment_Item_Adapter e_adapter = new Establishment_Item_Adapter(establishment_items, getApplicationContext(),1);
                 recyclerView.setAdapter(e_adapter);
             }
 
@@ -90,45 +93,99 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
                 switch (i) {
                     case 0:
                         //Sort A-Z
-                        Collections.sort(establishment_items, new EstablishmentNameComparatorAscending());
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentNameComparatorAscending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentNameComparatorAscending());
+                        }
+
                         //e_adapter = new Establishment_Item_Adapter(establishment_items, getApplicationContext());
                         //recyclerView.setAdapter(e_adapter);
 
                         break;
                     case 1:
                         //Sort Z-A
-                        Collections.sort(establishment_items, new EstablishmentNameComparatorDescending());
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentNameComparatorDescending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentNameComparatorDescending());
+                        }
+
                         //e_adapter = new Establishment_Item_Adapter(establishment_items, getApplicationContext());
                         //recyclerView.setAdapter(e_adapter);
                         break;
                     case 2:
-                        Collections.sort(establishment_items, new EstablishmentPriceComparatorAscending());
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentPriceComparatorAscending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentPriceComparatorAscending());
+                        }
+
                         //Sort price low to high
                         break;
                     case 3:
-                        Collections.sort(establishment_items, new EstablishmentPriceComparatorDescending());
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentPriceComparatorDescending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentPriceComparatorDescending());
+                        }
+
                         //Sort price high to low
                         break;
                     case 4:
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentRatingComparatorAscending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentRatingComparatorAscending());
+                        }
                         //Sort rating low to high
-                        Collections.sort(establishment_items, new EstablishmentRatingComparatorAscending());
+
                         break;
                     case 5:
                         //Sort rating high to low
-                        Collections.sort(establishment_items, new EstablishmentRatingComparatorDescending());
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentRatingComparatorDescending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentRatingComparatorDescending());
+                        }
+
                         break;
                     case 6:
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentDistanceComparatorAscending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentDistanceComparatorAscending());
+                        }
                         //Sort distance from campus low to high
-                        Collections.sort(establishment_items, new EstablishmentDistanceComparatorAscending());
+
                         break;
                     case 7:
+                        if(isFiltered == true){
+                            Collections.sort(filtered_establishment_items, new EstablishmentDistanceComparatorDescending());
+                        }
+                        else{
+                            Collections.sort(establishment_items, new EstablishmentDistanceComparatorDescending());
+                        }
                         //Sort distance from high to low
-                        Collections.sort(establishment_items, new EstablishmentDistanceComparatorDescending());
+
                         break;
 
 
                 }
-                e_adapter = new Establishment_Item_Adapter(establishment_items, getApplicationContext());
+                if(isFiltered == true){
+                    e_adapter = new Establishment_Item_Adapter(filtered_establishment_items, getApplicationContext(),1);
+                }
+                else{
+                    e_adapter = new Establishment_Item_Adapter(establishment_items, getApplicationContext(),1);
+                }
+
                 recyclerView.setAdapter(e_adapter);
             }
 
@@ -174,8 +231,44 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
         Intent i = new Intent(getApplicationContext(),Sign_in.class);
         startActivity(i);
     }
-    public void SUS(){}
-    public void manual(){}
+    public void SUS(){
+        DatabaseReference susReference = database.getReference("links").child("system_usability_scale_link");
+
+        susReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String url = dataSnapshot.getValue(String.class);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+    public void manual(){
+        DatabaseReference manualReference = database.getReference("links").child("uplbnb_renter_manual");
+        manualReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String url = dataSnapshot.getValue(String.class);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Override
     public void onBackPressed(){
@@ -190,13 +283,15 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
 
     @Override
     public void sendFilter(FilterInfo filterInfo) {
+        filtered_establishment_items.clear();
+        isFiltered = true;
         double minPriceFilter = filterInfo.getMinPrice();
         double maxPriceFilter = filterInfo.getMaxPrice();
         double comparePrice;
         double minComparePrice, maxComparePrice;
         boolean add = true;
         Establishment_Item_Adapter e_adapter;
-        List<Establishment_Item> filtered_establishment_items = new ArrayList<Establishment_Item>();
+
         for(int i = 0; i < establishment_items.size(); i++){
             add = true;
             if(filterInfo.getEstablishmentType() != -1){ //if 1 or 0
@@ -289,7 +384,7 @@ public class RenterHome extends AppCompatActivity implements FilterDialogFragmen
                 filtered_establishment_items.add(establishment_items.get(i));
             }
         }
-        e_adapter = new Establishment_Item_Adapter(filtered_establishment_items, getApplicationContext());
+        e_adapter = new Establishment_Item_Adapter(filtered_establishment_items, getApplicationContext(),1);
         recyclerView.setAdapter(e_adapter);
 
         /*        Toast.makeText(getApplicationContext(),rating+"",Toast.LENGTH_SHORT).show();

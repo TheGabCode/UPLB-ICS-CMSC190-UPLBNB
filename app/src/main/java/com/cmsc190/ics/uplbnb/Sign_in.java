@@ -31,7 +31,9 @@ public class Sign_in extends AppCompatActivity {
     FirebaseAuth loginAuth;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    DatabaseReference logReference;
     Button sign_inButton;
+    Button sign_upButton;
     EditText editTextEmail;
     EditText editTextPassword;
     FirebaseUser firebaseUser;
@@ -64,6 +66,11 @@ public class Sign_in extends AppCompatActivity {
                         finish();
                         startActivity(i);
                     }
+                    else{
+                        i = new Intent(getApplicationContext(),AdminHome.class);
+                        finish();
+                        startActivity(i);
+                    }
                 }
 
                 @Override
@@ -74,9 +81,10 @@ public class Sign_in extends AppCompatActivity {
 
 
         }
+
         setContentView(R.layout.sign_in_new);
 
-
+        sign_upButton = findViewById(R.id.buttonSignUp);
         progressDialog = new ProgressDialog(this);
         loginAuth = FirebaseAuth.getInstance();
         sign_inButton = (Button) findViewById(R.id.buttonSignIn);
@@ -93,7 +101,13 @@ public class Sign_in extends AppCompatActivity {
 
             TextView textViewSignUp = (TextView) findViewById(R.id.signuptext);
 
-
+        sign_upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),registration.class);
+                startActivity(i);
+            }
+        });
         textViewSignUp.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View arg0){
@@ -103,6 +117,12 @@ public class Sign_in extends AppCompatActivity {
 
         });
 
+    }
+
+    public void sendLog(String message,String uId){
+        logReference = firebaseDatabase.getReference("logs").push();
+        Log log = new Log(message,uId);
+        logReference.setValue(log);
     }
 
     public void userLogin(){
@@ -123,8 +143,8 @@ public class Sign_in extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                    String id;
-                    id = firebaseUser.getUid();
+
+                    final String id = firebaseUser.getUid();
                     databaseReference = firebaseDatabase.getReference("user");
                     databaseReference.child(id).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -133,20 +153,29 @@ public class Sign_in extends AppCompatActivity {
                             if(user.getUser_type().equals("renter")){
                                 //renter
                                 Intent i = new Intent(getApplicationContext(),RenterHome.class);
-
+                                String logMessage = user.getEmail() + " - " + user.getFullname() + " logs in as renter.";
+                                sendLog(logMessage,firebaseUser.getUid());
                                 finish();
+
                                 startActivity(i);
                                 progressDialog.dismiss();
                             }else if(user.getUser_type().equals("owner")){
                                 //owner
                                 Intent i = new Intent(getApplicationContext(),OwnerHome.class);
-
+                                String logMessage = user.getEmail() + " - " + user.getFullname() + " logs in as owner.";
+                                sendLog(logMessage,firebaseUser.getUid());
                                 finish();
                                 startActivity(i);
                                 progressDialog.dismiss();
                             }
                             else if(user.getUser_type().equals("admin")){
                                 //admin
+                                Intent i = new Intent(getApplicationContext(),AdminHome.class);
+                                String logMessage = user.getEmail() + " - " + user.getFullname() + " logs in as admin.";
+                                sendLog(logMessage,firebaseUser.getUid());
+                                finish();
+                                startActivity(i);
+                                progressDialog.dismiss();
                             }
                         }
 

@@ -72,11 +72,12 @@ public class Photo_List  extends Fragment {
     DatabaseReference userRef;
     FirebaseUser firebaseUser;
     User user;
-
+    Context staticThis;
     public void initUser(){
         userRef = firebaseDatabase.getInstance().getReference();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         String userId = firebaseUser.getUid();
+
         Log.d("User id","User id " + userId);
         userRef.child("user").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -86,10 +87,11 @@ public class Photo_List  extends Fragment {
                     addPhotoBtn.setVisibility(View.GONE);
                 }else{
                     if(user != null){
-                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                        if(user.getUser_type().equals("renter") || (!user.getId().equals(e.getOwner_id()) && !user.getUser_type().equals("admin")) ){
                             addPhotoBtn.setVisibility(View.GONE);
+
                         }
-                        else if(user.getId().equals(e.getOwner_id())){
+                        else if(user.getId().equals(e.getOwner_id()) || user.getUser_type().equals("admin")){
                             addPhotoBtn.setVisibility(View.VISIBLE);
                         }
                     }
@@ -130,9 +132,49 @@ public class Photo_List  extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 photo_items.clear();
                 e = dataSnapshot.getValue(Establishment_Item.class);
+                getActivity().setTitle(e.getEstablishmentName());
                 getPhotos(e);
-                adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId(),"",true);
-                recyclerView.setAdapter(adapter);
+                final FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+                userRef = FirebaseDatabase.getInstance().getReference("user");
+                userRef.child(fUser.getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User randUser = dataSnapshot.getValue(User.class);
+                        if(fUser == null){
+                            adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId(),"",true,0);
+                            recyclerView.setAdapter(adapter);
+                        }else{
+                            if(randUser != null){
+                                if(randUser.getUser_type().equals("renter") || (!randUser.getId().equals(e.getOwner_id()) && !randUser.getUser_type().equals("admin")) ){
+                                    addPhotoBtn.setVisibility(View.GONE);
+                                    adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId(),"",true,0);
+                                    recyclerView.setAdapter(adapter);
+                                }
+                                else if(randUser.getId().equals(e.getOwner_id()) || randUser.getUser_type().equals("admin")){
+                                    addPhotoBtn.setVisibility(View.VISIBLE);
+                                    adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId(),"",true,1);
+                                    recyclerView.setAdapter(adapter);
+                                }
+                            }
+                            else{
+
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                /*if(fUser.getUid().equals(e.getOwner_id())){
+                    adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId(),"",true,1);
+                }
+                else{
+                    adapter = new Photo_Item_Adapter(photo_items,getActivity(),e.getId(),"",true,0);
+                }*/
+
             }
 
             @Override
@@ -147,6 +189,9 @@ public class Photo_List  extends Fragment {
         addPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(photoList.getChildCount() <= 0){
+                    uris.clear();
+                }
                 selectImage();
             }
         });
@@ -156,14 +201,15 @@ public class Photo_List  extends Fragment {
         savePhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 saveImages();
 
             }
         });
         savePhotoBtn.setVisibility(View.GONE);
         String establishmentId = getArguments().getString("establishmentId");
-        adapter = new Photo_Item_Adapter(photo_items,getActivity(),establishmentId,"",true);
-        recyclerView.setAdapter(adapter);
+/*        adapter = new Photo_Item_Adapter(photo_items,getActivity(),establishmentId,"",true);
+        recyclerView.setAdapter(adapter);*/
         return view;
     }
 
@@ -203,7 +249,7 @@ public class Photo_List  extends Fragment {
                     ref.putBytes(data1).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(getContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
+
 
 
                         }
@@ -228,7 +274,10 @@ public class Photo_List  extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             try{
+                saveUrisToDatabase();
+
                 progressDialog.dismiss();
+                progressDialog = null;
             }catch (Exception e){
 
             }
@@ -238,18 +287,17 @@ public class Photo_List  extends Fragment {
     public void saveImages(){
         savePhotoBtn.setVisibility(View.GONE);
         new ImageUploader().execute(null,null,null);
-        saveUrisToDatabase();
+        photoList.removeAllViews();
+
 
     }
 
     public void saveUrisToDatabase(){
-
-
         for(int i = 0; i < uris.size(); i++){
             imageRef = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("picture").push();
             imageRef.setValue(uris.get(i).getLastPathSegment());
         }
-        photoList.removeAllViews();
+
     }
     public void selectImage(){
         Intent intent = new Intent();
@@ -325,7 +373,7 @@ public class Photo_List  extends Fragment {
 
     public void getPhotos(Establishment_Item e){
         if(e.picture != null){
-            Toast.makeText(getContext(),"Not null",Toast.LENGTH_SHORT).show();
+
             Iterator entries = e.getPictures().entrySet().iterator();
             while (entries.hasNext()){
                 HashMap.Entry entry = (HashMap.Entry) entries.next();
@@ -335,7 +383,7 @@ public class Photo_List  extends Fragment {
             }
         }
         else{
-            Toast.makeText(getContext(),"null",Toast.LENGTH_SHORT).show();
+
         }
     }
 

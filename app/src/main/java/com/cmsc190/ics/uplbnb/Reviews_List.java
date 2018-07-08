@@ -66,6 +66,7 @@ public class Reviews_List extends Fragment implements View.OnClickListener {
                     //move to write review intent
             }
         });
+        getActivity().setTitle(getArguments().getString("establishmentName"));
         review_items = new ArrayList<>();
         adapter = new Review_Item_Adapter(review_items,getActivity());
 

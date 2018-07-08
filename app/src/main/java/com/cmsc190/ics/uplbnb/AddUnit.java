@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -75,7 +76,6 @@ public class AddUnit extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         intent = getIntent();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -145,7 +145,7 @@ public class AddUnit extends AppCompatActivity {
     public void initializeFurniture(Establishment_Item e) {
         HashMap<String, Integer> furniture = (HashMap<String, Integer>) ((Dormitory_Item) e).getAvailableFurniture();
         if (furniture != null) {
-            Toast.makeText(getApplicationContext(), "Has furniture", Toast.LENGTH_SHORT).show();
+
             Iterator entries = furniture.entrySet().iterator();
             while (entries.hasNext()) {
                 HashMap.Entry entry = (HashMap.Entry) entries.next();
@@ -154,7 +154,7 @@ public class AddUnit extends AppCompatActivity {
                 addFurniture(key, value);
             }
         } else {
-            Toast.makeText(getApplicationContext(), "No furniture", Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -276,11 +276,17 @@ public class AddUnit extends AppCompatActivity {
 
         Unit_Item unit = new Unit_Item(unitIdentifier, open, slotsAvailable, rate, id, condition, furniture, ratePerHead, capacity, pictures);
         databaseReference.setValue(unit);
-        saveImages(id);
         DatabaseReference unitRef = FirebaseDatabase.getInstance().getReference("establishment").child(establishmentId).child("numUnitsAvailable");
         unitRef.setValue(countOpenUnits(e));
+        if(uris.size() > 0){
+            saveImages(id);
+            finish();
+        }
+        else{
+            finish();
+        }
 
-        finish();
+
 
     }
 
@@ -383,9 +389,8 @@ public class AddUnit extends AppCompatActivity {
     }
 
     public void saveImages(String id) {
-        Toast.makeText(getApplicationContext(), uris.size() + " " + e.getEstablishmentName(), Toast.LENGTH_SHORT).show();
-        new ImageUploader().execute(id, null, null);
-        /*if(uris.size() > 0){
+        //new ImageUploader(id).execute(id, null, null);
+        if(uris.size() > 0){
             StorageReference ref;
             ByteArrayOutputStream baos;
             byte[] data1 = null;
@@ -407,23 +412,26 @@ public class AddUnit extends AppCompatActivity {
                 ref.putBytes(data1).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getApplicationContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
+                //        Toast.makeText(getApplicationContext(),"added "+ cnt + " " + uris.get(cnt).getLastPathSegment(),Toast.LENGTH_SHORT).show();
 
                     }
                 });
 
             }
 
+            saveUrisToDatabase(id);
+        }
 
-        }*/
-
-        saveUrisToDatabase(id);
 
     }
 
 
     private class ImageUploader extends AsyncTask<String, Void, Void> {
         ProgressDialog progressDialog;
+        String unitId;
+        public ImageUploader(String unitId){
+            this.unitId = unitId;
+        }
 
         @Override
         protected Void doInBackground(String[] objects) {
@@ -464,16 +472,23 @@ public class AddUnit extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
+/*
             progressDialog = new ProgressDialog(AddUnit.this);
             progressDialog.setMessage("Uploading");
             progressDialog.show();
+*/
 
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             try{
+/*
                 progressDialog.dismiss();
+                progressDialog = null;
+*/
+                saveUrisToDatabase(this.unitId);
+
             }catch (Exception e){
 
             }

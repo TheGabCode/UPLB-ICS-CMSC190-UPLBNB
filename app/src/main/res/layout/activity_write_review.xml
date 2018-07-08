@@ -127,6 +127,7 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:paddingTop="20dp">
+<!--
 
                     <EditText
                         android:id="@+id/addReviewTitle"
@@ -136,6 +137,7 @@
                         android:ems="10"
                         android:hint="Review Title"
                         android:inputType="textPersonName" />
+-->
 
                     <EditText
                         android:id="@+id/addReviewDescription"
@@ -158,7 +160,8 @@
                     android:id="@+id/addReviewSubmitButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Submit Review" />
+                    android:text="Submit Review"
+                    android:background="@color/colorAccent"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

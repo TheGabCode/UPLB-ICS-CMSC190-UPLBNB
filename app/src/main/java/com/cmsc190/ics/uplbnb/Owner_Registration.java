@@ -116,6 +116,7 @@ public class Owner_Registration extends Fragment implements View.OnClickListener
                                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         startActivity(i);
                                         progressDialog.dismiss();
+                                        getActivity().finish();
 
                                     }
                                     else{

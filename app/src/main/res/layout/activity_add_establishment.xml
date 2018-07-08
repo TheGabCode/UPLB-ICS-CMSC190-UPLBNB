@@ -722,6 +722,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:id="@+id/addEstablishmentConcealUnitsLayout"
             android:layout_height="match_parent"
@@ -739,6 +740,7 @@
                 app:srcCompat="@drawable/hide_48px" />
 
             <LinearLayout
+
                 android:background="#fff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

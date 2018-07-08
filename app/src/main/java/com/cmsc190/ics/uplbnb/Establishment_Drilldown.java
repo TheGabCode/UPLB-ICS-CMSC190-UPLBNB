@@ -1,8 +1,10 @@
 package com.cmsc190.ics.uplbnb;
 
+
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 public class Establishment_Drilldown extends AppCompatActivity {
     Intent i;
+    Toolbar toolbar;
     public static Establishment_Item e;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -61,6 +64,10 @@ public class Establishment_Drilldown extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -75,6 +82,11 @@ public class Establishment_Drilldown extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
 
 
@@ -129,8 +141,9 @@ public class Establishment_Drilldown extends AppCompatActivity {
             e = (Establishment_Item)i.getSerializableExtra("establishment");;
             switch(position){
                 case 0: //overview
+                    toolbar.setTitle("UPLBnB");
                     if(e.getEstablishmentType() == 1){
-                        Toast.makeText(getApplicationContext(),e.getEstablishmentName(),Toast.LENGTH_SHORT);
+
                         Apartment_Drilldown a1 = new Apartment_Drilldown();
                         Bundle args = new Bundle();
                         args.putString("id",e.getId());
@@ -140,15 +153,16 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     else if(e.getEstablishmentType() == 0){
                         Dormitory_Drilldown d1 = new Dormitory_Drilldown();
                         Bundle args2 = new Bundle();
-                        Toast.makeText(getApplicationContext(),e.getId(),Toast.LENGTH_SHORT);
                         args2.putString("id2",e.getId());
                         d1.setArguments(args2);
                         return d1;
                     }
                     return null;
 
+
                 case 1: //units
                     final Units_List u1 = new Units_List();
+                    toolbar.setTitle(e.getEstablishmentName());
                     Bundle args3 = new Bundle();
                     args3.putString("establishmentId",e.getId());
                     args3.putInt("establishmentType",e.getEstablishmentType());
@@ -157,6 +171,7 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     return u1;
 
                 case 2:
+                    toolbar.setTitle(e.getEstablishmentName());
                     final Reviews_List r1 = new Reviews_List();
                     Bundle args4 = new Bundle();
                     args4.putString("establishmentId",e.getId());
@@ -164,16 +179,14 @@ public class Establishment_Drilldown extends AppCompatActivity {
                     args4.putInt("establishmentType",e.getEstablishmentType());
                     args4.putFloat("establishmentRating",e.getRating());
                     r1.setArguments(args4);
-
                     return r1;
 
                 case 3:
+                    toolbar.setTitle(e.getEstablishmentName());
                     final Photo_List p1 = new Photo_List();
                     Bundle args5 = new Bundle();
                     args5.putString("establishmentId",e.getId());
                     p1.setArguments(args5);
-
-
                     return p1;
 
             }

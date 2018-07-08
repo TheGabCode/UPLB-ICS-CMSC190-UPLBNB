@@ -183,7 +183,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            StorageReference ref = storageReference.child("establishments/"+ establishmentId);
+            StorageReference ref = storageReference.child("establishments/"+ establishmentId+"/"+filePath.getLastPathSegment());
 
             Bitmap bmp = null;
 
@@ -235,15 +235,16 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
     public void updateEstablishment(){
         Establishment_Item newEstablishment;
         String establishmentNameString = establishmentName.getText().toString().trim();
-        String contactPerson = user.getId();
-        String contactNumber = user.getNumber();
+        String contactPerson = e.getContactPerson();
+        String contactNumber = e.getContactNumber1();
+        String contactNumber2 = e.getContactNumber2();
         String address = addEstablishmentAddressAutocomplete.getText().toString().trim();
         double latitude = mPlace.getLatitude();
         double longitude = mPlace.getLongitude();
         float[] distanceFromCampus = new float[1];
         Location.distanceBetween(latitude,longitude,UPLB_GATE_LAT,UPLB_GATE_LONG,distanceFromCampus);
         String price;
-        String curfewHours = startCurfewHours.getText().toString().trim() + "-" + endCurfewHours.getText().toString().trim();
+
         boolean security;
         boolean visitorsAllowed;
         boolean furnished;
@@ -297,7 +298,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         furnished = (intCondition == 0) ? true : false;
         concealContactPerson = (intConcealContactPerson == 0) ? true : false;
         concealPrice = (intConcealPrice == 0) ? true : false;
-        concealUnits = (intConcealUnits == 0)? true : false;
+        concealUnits = false;
         includeBillsInRate = (intIncludeBillsInRate == 0) ? true : false;
 
         if(intAcceptedSex == 0){
@@ -322,6 +323,14 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
             Toast.makeText(getApplicationContext(), "Please enter price.",Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if(!TextUtils.isEmpty(endCurfewHours.getText().toString()) && TextUtils.isEmpty(startCurfewHours.getText().toString())){
+            Toast.makeText(getApplicationContext(),"Please fill in start of curfew time.",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String curfewHours = startCurfewHours.getText().toString().trim() + "-" + endCurfewHours.getText().toString().trim();
+
 
         if(establishmentType == 1){
             if(TextUtils.isEmpty(apartmentRentYears.getText().toString().trim())){
@@ -365,13 +374,16 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         HashMap<String,String> picture = e.getPictures();
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment");
         String id = intent.getStringExtra("establishmentId");
+        String headerUrl = e.getHeaderUrl();
+        if(filePath != null){
+            headerUrl = filePath.getLastPathSegment();
+        }
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, e.getOwner_id(), isFixedPrice,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),picture);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, e.getOwner_id(), isFixedPrice,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),picture,headerUrl);
             databaseReference.child(id).setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),acceptedSex,picture);
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),acceptedSex,picture);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber2, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,e.getOwner_id(),furniture,review,latitude,longitude,mPlace,unit,e.getNumUnitsAvailable(),acceptedSex,picture,headerUrl);
             databaseReference.child(id).setValue(newEstablishment);
         }
         saveImage(id);
@@ -435,6 +447,7 @@ public class EditEstablishment extends AppCompatActivity implements GoogleApiCli
         /*concealContactPersonSpinner.setSelection(1);*/
         concealPriceSpinner = (Spinner)findViewById(R.id.concealPriceSpinner);
         concealUnitsSpinner = (Spinner)findViewById(R.id.concealUnitsSpinner);
+        concealUnitsSpinner.setVisibility(View.GONE);
         includeBillsInRateSpinner = (Spinner)findViewById(R.id.includeBillsInRateSpinner);
         securitySpinner = (Spinner)findViewById(R.id.securitySpinner);
         visitorsAllowedSpinner = (Spinner)findViewById(R.id.visitorsAllowedSpinner);

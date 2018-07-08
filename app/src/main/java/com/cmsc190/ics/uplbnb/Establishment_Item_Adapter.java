@@ -31,9 +31,10 @@ import java.util.List;
 
 public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishment_Item_Adapter.ViewHolder> {
 
-    public Establishment_Item_Adapter(List<Establishment_Item> establishment_items, Context context) {
+    public Establishment_Item_Adapter(List<Establishment_Item> establishment_items, Context context, int use) {
         this.establishment_items = establishment_items;
         this.context = context;
+        this.use = use;
     }
 
     List<Establishment_Item> establishment_items;
@@ -41,11 +42,20 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
     StorageReference headerReference;
     StorageReference storageReference;
     FirebaseStorage firebaseStorage;
+    int use; //1 - non admin view 0 - admin view owner profile
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.establishment_item_2,parent,false);
+        View v;
+        if(use == 1){
+            v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.establishment_item_2,parent,false);
+        }
+        else{
+            v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.establishment_item_simple,parent,false);
+        }
+
         return new ViewHolder(v);
     }
 
@@ -55,44 +65,61 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
         final Establishment_Item establishment = establishment_items.get(position);
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
+        if(use == 1){
+            headerReference = storageReference.child("establishments/"+establishment.getId()+"/"+establishment.getHeaderUrl());
+            GlideApp.with(context)
+                    .load(headerReference)
+                    .placeholder(R.drawable.logo2)
+                    .centerCrop()
+                    .override(300)
+/*                    .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))*/
+                    .into(holder.thumbnail);
 
-        headerReference = storageReference.child("establishments/"+establishment.getId());
-        GlideApp.with(context)
-                .load(headerReference)
-                .placeholder(R.drawable.logo2)
-                .centerCrop()
-                .override(300)
-                .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
-                .into(holder.thumbnail);
-        /*if(e.getEstablishmentType() == 1){
-            e = (Apartment_Item)e;
+            holder.textViewEstablishmentName.setText(establishment.getEstablishmentName());
+            if(establishment.getEstablishmentType() == 1){
+                holder.establishmentCategory.setText("Apartment");
+            }
+            else if(establishment.getEstablishmentType() == 0){
+                holder.establishmentCategory.setText("Dormitory");
+            }
+
+            float rating = establishment.getRating();
+            holder.ratingBarEstablishment.setRating(rating);
+            holder.establishmentPrice.setText(establishment.getPrice()+ "PHP");
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Context context = view.getContext();
+                    Intent i = new Intent(context,Establishment_Drilldown.class);
+                    i.putExtra("establishment",establishment);
+                    context.startActivity(i);
+
+                }
+            });
         }
         else{
-            e = (Dormitory_Item)e;
-        }*/
-        holder.textViewEstablishmentName.setText(establishment.getEstablishmentName());
-        if(establishment.getEstablishmentType() == 1){
-            holder.establishmentCategory.setText("Apartment");
-        }
-        else if(establishment.getEstablishmentType() == 0){
-            holder.establishmentCategory.setText("Dormitory");
-        }
-
-        float rating = establishment.getRating();
-        holder.ratingBarEstablishment.setRating(rating);
-        holder.establishmentPrice.setText(establishment.getPrice());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Context context = view.getContext();
-                Toast.makeText(context, "Clicked " + establishment.getEstablishmentName(), Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(context,Establishment_Drilldown.class);
-                i.putExtra("establishment",establishment);
-                context.startActivity(i);
-
+            holder.textViewEstablishmentName.setText(establishment.getEstablishmentName());
+            if(establishment.getEstablishmentType() == 1){
+                holder.establishmentCategory.setText("Apartment");
             }
-        });
+            else{
+                holder.establishmentCategory.setText("Dormitory");
+            }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Context context = view.getContext();
+                    Intent i = new Intent(context,Establishment_Drilldown.class);
+                    i.putExtra("establishment",establishment);
+                    context.startActivity(i);
+
+                }
+            });
+
+        }
+
     }
 
     public float computeRating(Establishment_Item e){
@@ -131,11 +158,18 @@ public class Establishment_Item_Adapter extends RecyclerView.Adapter<Establishme
 
          public ViewHolder(View itemView) {
             super(itemView);
-            thumbnail = (ImageView)itemView.findViewById(R.id.establishmentThumbnail);
-            textViewEstablishmentName = (TextView) itemView.findViewById(R.id.establishment_item_name);
-            establishmentCategory = (TextView) itemView.findViewById(R.id.establishment_item_category);
-            ratingBarEstablishment = (RatingBar) itemView.findViewById(R.id.establishment_item_rating);
-            establishmentPrice = (TextView) itemView.findViewById(R.id.establishment_item_price);
+            if(use == 1){
+                thumbnail = (ImageView)itemView.findViewById(R.id.establishmentThumbnail);
+                textViewEstablishmentName = (TextView) itemView.findViewById(R.id.establishment_item_name);
+                establishmentCategory = (TextView) itemView.findViewById(R.id.establishment_item_category);
+                ratingBarEstablishment = (RatingBar) itemView.findViewById(R.id.establishment_item_rating);
+                establishmentPrice = (TextView) itemView.findViewById(R.id.establishment_item_price);
+            }
+            else{
+                textViewEstablishmentName = (TextView)itemView.findViewById(R.id.establishmentName);
+                establishmentCategory = (TextView)itemView.findViewById(R.id.establishmentType);
+            }
+
          }
     }
 }

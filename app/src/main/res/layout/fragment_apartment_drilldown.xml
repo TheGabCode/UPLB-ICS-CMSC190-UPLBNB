@@ -24,10 +24,6 @@
                     android:id="@+id/imageViewApartment"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
                     android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -36,12 +32,8 @@
 
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/floatingActionButtonGetDirections"
-                    android:layout_width="53dp"
-                    android:layout_height="51dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.93"
@@ -109,7 +101,7 @@
                             android:layout_height="wrap_content"
                             android:src="@drawable/pencil_48px"
                             android:background="#fff"
-                            android:layout_marginTop="5dp"/>
+                            android:layout_marginTop="10dp"/>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -123,7 +115,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/addressIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/address_48px"
@@ -148,7 +140,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/contactPersonIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/contact_person_48px"
@@ -173,10 +165,11 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/contactNumberIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/phone_48px"
+                        android:layout_marginTop="5dp"
                         android:layout_marginRight="10dp"/>
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -211,7 +204,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/priceIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/price_48px"
@@ -221,6 +214,30 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Price"
+                        android:textColor="#000"
+                        android:layout_gravity="center_vertical"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@drawable/background_with_shadow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="10dp">
+                    <ImageView
+                        android:id="@+id/availableUnitsIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/door_opened_48px"
+                        android:layout_marginRight="10dp"/>
+                    <TextView
+                        android:id="@+id/drilldownApartmentOpenUnits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5 / 18 units available"
                         android:textColor="#000"
                         android:layout_gravity="center_vertical"/>
 
@@ -236,7 +253,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/curfewHoursIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/alarm_clock_48px"
@@ -260,7 +277,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/visitorsIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/visitors_48px"
@@ -284,7 +301,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/distanceFromCampusIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/university_48px"
@@ -308,7 +325,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/securityIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/security_48px"
@@ -332,7 +349,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/contractYearsIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/rent_years_2_48px"
@@ -356,7 +373,7 @@
                     android:paddingLeft="15dp"
                     android:paddingTop="10dp">
                     <ImageView
-
+                        android:id="@+id/conditionIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/furnished_48px"

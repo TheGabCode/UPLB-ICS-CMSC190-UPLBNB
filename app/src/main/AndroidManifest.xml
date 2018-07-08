@@ -6,13 +6,14 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label=""
-        android:name="android.support.multidex.MultiDexApplication"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -27,10 +28,6 @@
             android:name=".Sign_in"
             android:screenOrientation="portrait"
             android:theme="@style/AppLoginTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <meta-data
@@ -38,36 +35,61 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".home"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".registration"
             android:label="@string/title_activity_registration"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".RenterHome"
             android:label="UPLBnB"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".User_Drilldown"
+            android:label="Owner Profile"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".Establishment_Drilldown"
             android:label="@string/title_activity_establishment__drilldown"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Map_Activity" />
-        <activity android:name=".WriteReview" />
-        <activity android:name=".ApartmentUnitDrilldown" />
+        <activity android:name=".Map_Activity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".WriteReview"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ApartmentUnitDrilldown"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".OwnerHome"
             android:label="UPLBnB"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".AddEstablishment" />
-        <activity android:name=".EditEstablishment" />
-        <activity android:name=".AddUnit" />
-        <activity android:name=".EditUnit"></activity>
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AddEstablishment"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EditEstablishment"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AddUnit"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".EditUnit"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".AdminHome"
+            android:label="@string/title_activity_admin_home"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SplashScreen"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

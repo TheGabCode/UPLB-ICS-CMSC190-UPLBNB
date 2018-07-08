@@ -1,6 +1,9 @@
 package com.cmsc190.ics.uplbnb;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
@@ -16,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.signature.ObjectKey;
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +52,8 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     public static TextView security;
     public static TextView furnitureAvailable;
     public static TextView capacityPerUnit;
+    public static TextView openUnits;
+    public static TextView acceptedSex;
     public static RatingBar rating;
     public static ImageView headPhoto;
     public static ImageButton editEstablishmentBtn;
@@ -62,6 +68,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
     DatabaseReference userRef;
     User user;
     FirebaseDatabase firebaseDatabase;
+    ImageView addressIcon,contactPersonIcon,contactNumberIcon,priceIcon,availableUnitsIcon,curfewHoursIcon,visitorsAllowedIcon,acceptedSexIcon,capacityIcon,distanceFromCampusIcon,securityIcon,furnitureIcon;
 
     public void initUser(){
         userRef = firebaseDatabase.getInstance().getReference();
@@ -76,10 +83,10 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                     editEstablishmentBtn.setVisibility(View.GONE);
                 }else{
                     if(user != null){
-                        if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                        if(user.getUser_type().equals("renter") || (!user.getId().equals(e.getOwner_id()) && !user.getUser_type().equals("admin")) ){
                             editEstablishmentBtn.setVisibility(View.GONE);
                         }
-                        else if(user.getId().equals(e.getOwner_id())){
+                        else if(user.getId().equals(e.getOwner_id()) || user.getUser_type().equals("admin")){
                             editEstablishmentBtn.setVisibility(View.VISIBLE);
                         }
                     }
@@ -88,7 +95,6 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                     }
 
                 }
-                Log.d("User id","XXX" + user.getFullname());
 
             }
 
@@ -109,7 +115,32 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
         View view =  inflater.inflate(R.layout.fragment_dormitory_drilldown,container,false);
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = firebaseStorage.getReference();
+        addressIcon = view.findViewById(R.id.addressIcon);
+        contactPersonIcon = view.findViewById(R.id.contactPersonIcon);
+        contactNumberIcon = view.findViewById(R.id.contactNumberIcon);
+        priceIcon = view.findViewById(R.id.priceIcon);
+        availableUnitsIcon = view.findViewById(R.id.availableUnitsIcon);
+        curfewHoursIcon = view.findViewById(R.id.curfewHoursIcon);
+        visitorsAllowedIcon = view.findViewById(R.id.visitorsIcon);
+        distanceFromCampusIcon = view.findViewById(R.id.distanceFromCampusIcon);
+        securityIcon = view.findViewById(R.id.securityIcon);
+        capacityIcon = view.findViewById(R.id.capacityIcon);
+        furnitureIcon = view.findViewById(R.id.furnitureIcon);
+        acceptedSexIcon = view.findViewById(R.id.acceptedSexIcon);
+        addressIcon.setOnClickListener(this);
+        contactPersonIcon.setOnClickListener(this);
+        contactNumberIcon.setOnClickListener(this);
+        priceIcon.setOnClickListener(this);
+        availableUnitsIcon.setOnClickListener(this);
+        curfewHoursIcon.setOnClickListener(this);
+        visitorsAllowedIcon.setOnClickListener(this);
+        distanceFromCampusIcon.setOnClickListener(this);
+        securityIcon.setOnClickListener(this);
+        capacityIcon.setOnClickListener(this);
+        furnitureIcon.setOnClickListener(this);
+        acceptedSexIcon.setOnClickListener(this);
         rating = (RatingBar)view.findViewById(R.id.drilldownDormitoryRating);
+        openUnits = (TextView)view.findViewById(R.id.drilldownDormitoryOpenUnits);
         establishmentType = (TextView)view.findViewById(R.id.drilldownDormitoryType);
         furnitureAvailable = (TextView)view.findViewById(R.id.drilldownDormitoryAvailableFurniture);
         headPhoto = (ImageView)view.findViewById(R.id.imageDormitory);
@@ -120,6 +151,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
         contactNumber =  view.findViewById(R.id.drilldownDormitoryContactNumber1);
         priceRange =  view.findViewById(R.id.drilldownDormitoryPriceRange);
         security = view.findViewById(R.id.drilldownDormitorySecurity);
+        acceptedSex = view.findViewById(R.id.drilldownDormitoryAcceptedSex);
         curfewHours = view.findViewById(R.id.drilldownDormitoryCurfewHours);
         visitorsAllowed = view.findViewById(R.id.drilldownDormitoryVisitorsAllowed);
         distanceFromCampus = view.findViewById(R.id.drilldownDormitoryDistanceFromCampus);
@@ -131,15 +163,12 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
                 editEstablishment();
             }
         });
+        editEstablishmentBtn.setVisibility(View.GONE);
         openMap = (FloatingActionButton)view.findViewById(R.id.floatingActionButtonGetDirections);
         openMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(),Map_Activity.class);
-                i.putExtra("address",establishmentName.getText().toString().trim());
-                i.putExtra("latitude",e.getLatitude());
-                i.putExtra("longitude",e.getLongitude());
-                startActivity(i);
+                manageLocationPermissions();
             }
         });
         //Establishment_Item e = (Establishment_Item) getArguments().getSerializable("e");
@@ -149,32 +178,60 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
             public void onDataChange(DataSnapshot dataSnapshot) {
                 e = dataSnapshot.getValue(Dormitory_Item.class);
                 if(e == null){
-                    getActivity().finish();
-                    return;
+                    if(getActivity() != null){
+                        getActivity().finish();
+                    }
+                     return;
                 }
                 rating.setRating(e.getRating());
 
                 establishmentName.setText(e.getEstablishmentName());
                 establishmentType.setText("Dormitory");
                 establishmentAddress.setText(e.getAddress());
+                if(e.getUnits() != null){
+                    openUnits.setText(e.getNumUnitsAvailable() + "/ " + e.getUnits().size() +" units available");
+                }
+                else{
+                    openUnits.setText("No available information yet");
+                }
 
-                contactPerson.setText(e.getContactPerson());
+                if(e.isConcealContactPerson() == true){
+                    contactPerson.setText("Owner/Manager chooses not to disclose this information, call/text number for details");
+                }
+                else{
+                    contactPerson.setText(e.getContactPerson());
+                }
+
 
                 contactNumber.setText(e.getContactNumber1() + "");
 
                 contactNumber2.setText(e.getContactNumber2()+"");
-
-                priceRange.setText(e.getPrice() + " PHP");
-                if(e.isRatePerHead() == true){
-                    priceRange.append(" - per head");
-                }
-                if(e.isBillsIncludedInRate() == true){
-                    priceRange.append(", bills included");
+                if(e.isConcealPrice() == true){
+                     priceRange.setText("Owner/Manager chooses not to disclose this information, call/text number for details");
                 }
                 else{
-                    priceRange.append(", bills not included");
+                    priceRange.setText(e.getPrice() + " PHP");
+                    if(e.isRatePerHead() == true){
+                        priceRange.append(" - per head");
+                    }
+                    if(e.isBillsIncludedInRate() == true){
+                        priceRange.append(" - bills included");
+                    }
+                    else{
+                        priceRange.append(" - bills not included");
+                    }
                 }
 
+
+                if(e.getAcceptedSex() == -1){
+                    acceptedSex.setText("Coed");
+                }
+                else if(e.getAcceptedSex() == 1){
+                    acceptedSex.setText("Male");
+                }
+                else{
+                    acceptedSex.setText("Female");
+                }
 
 
                 if(e.getCurfewHours().equals("-")){
@@ -207,11 +264,14 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
 
                 furnitureAvailable.setText(stringifyFurniture(e.getAvailableFurniture()));
                 capacityPerUnit.setText(e.getCapacityPerUnit() + " persons");
-                headerReference = storageReference.child("establishments/"+e.getId());
+                headerReference = storageReference.child("establishments/"+e.getId()+"/"+e.getHeaderUrl());
+                while (getContext() == null){
+
+                }
                 GlideApp.with(getContext())
                         .load(headerReference)
                         .placeholder(R.drawable.logo2)
-                        .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))
+/*                        .signature(new ObjectKey(String.valueOf(System.currentTimeMillis())))*/
                         .into(headPhoto);
                 initUser();
 
@@ -229,6 +289,22 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
 
         return view;
     }
+
+    public void manageLocationPermissions() {
+        LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), 1);
+        }
+        else{
+            Intent i = new Intent(getActivity(),Map_Activity.class);
+            i.putExtra("address",establishmentName.getText().toString().trim());
+            i.putExtra("latitude",e.getLatitude());
+            i.putExtra("longitude",e.getLongitude());
+            startActivity(i);
+        }
+
+    }
+
 
     public float computeRating(Establishment_Item e){
         e.getReviews();
@@ -253,10 +329,7 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
         startActivity(i);
     }
 
-    @Override
-    public void onClick(View view){
 
-    }
 
     public String stringifyFurniture(HashMap<String,Integer> furniture){
         String furnitureItems = "";
@@ -273,5 +346,47 @@ public class Dormitory_Drilldown extends Fragment implements View.OnClickListene
 
         return furnitureItems;
     }
+
+    @Override
+    public void onClick(View view){
+        if(view.getId() == R.id.addressIcon){
+            Toast.makeText(getContext(),"Address",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.contactPersonIcon){
+            Toast.makeText(getContext(),"Contact Person",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.contactNumberIcon){
+            Toast.makeText(getContext(),"Contact Info",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.priceIcon){
+            Toast.makeText(getContext(),"Expected monthly Rate",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.availableUnitsIcon){
+            Toast.makeText(getContext(),"Units available",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.curfewHoursIcon){
+            Toast.makeText(getContext(),"Curfew Hours",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.visitorsIcon){
+            Toast.makeText(getContext(),"Visitors allowed?",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.distanceFromCampusIcon){
+            Toast.makeText(getContext(),"Distance from campus",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.securityIcon){
+            Toast.makeText(getContext(),"Security?",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.capacityIcon){
+            Toast.makeText(getContext(),"Expected capacity per unit",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.furnitureIcon){
+            Toast.makeText(getContext(),"Available furniture, appliances, rooms, misc",Toast.LENGTH_SHORT).show();
+        }
+        else if(view.getId() == R.id.acceptedSexIcon){
+            Toast.makeText(getContext(),"Accepted sex",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 }

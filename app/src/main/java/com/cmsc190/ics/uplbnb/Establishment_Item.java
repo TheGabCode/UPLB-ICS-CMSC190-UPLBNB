@@ -43,7 +43,8 @@ public class Establishment_Item implements Serializable{
     private double longitude;
     private PlaceInfo placeInfo;
     private int numUnitsAvailable;
-    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit, int numUnitsAvailable,HashMap<String,String> picture ) {
+    private String headerUrl;
+    public Establishment_Item(String establishmentName, String contactPerson, String contactNumber1, String contactNumber2, String price, String address, String curfewHours, boolean visitorsAllowed, int establishmentType, boolean billsIncludedInRate, float distanceFromCampus, boolean security, boolean concealContactPerson, boolean concealPrice, boolean concealAvailableUnits, float rating, String id, String owner_Id,HashMap<String, Review> review, double latitude, double longitude, PlaceInfo placeInfo, HashMap<String, Unit_Item> unit, int numUnitsAvailable,HashMap<String,String> picture,String headerUrl ) {
         this.owner_id = owner_Id;
         this.establishmentName = establishmentName;
         this.contactPerson = contactPerson;
@@ -69,6 +70,7 @@ public class Establishment_Item implements Serializable{
         this.longitude = longitude;
         this.placeInfo = placeInfo;
         this.picture = picture;
+        this.headerUrl = headerUrl;
     }
 
     public String getEstablishmentName() {
@@ -86,6 +88,10 @@ public class Establishment_Item implements Serializable{
     }
     public PlaceInfo getPlaceInfo(){
         return placeInfo;
+    }
+
+    public String getHeaderUrl(){
+        return headerUrl;
     }
 
     public HashMap<String,Review> getReviews(){

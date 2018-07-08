@@ -184,7 +184,6 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
         gMap = googleMap;
         if (mLocationPermissionGranted) {
             getDeviceLocation();
@@ -199,6 +198,10 @@ public class Map_Activity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void getRouterMarker(LatLng ll) {
+        if(deviceLocation == null){
+            Toast.makeText(getApplicationContext(),"Can't get device location, please try again",Toast.LENGTH_SHORT).show();
+            return;
+        }
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.WALKING)
                 .withListener(this)

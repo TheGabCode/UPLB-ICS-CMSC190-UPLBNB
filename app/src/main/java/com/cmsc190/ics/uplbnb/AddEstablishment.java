@@ -234,7 +234,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         float[] distanceFromCampus = new float[1];
         Location.distanceBetween(latitude,longitude,UPLB_GATE_LAT,UPLB_GATE_LONG,distanceFromCampus);
         String price;
-        String curfewHours = startCurfewHours.getText().toString().trim() + "-" + endCurfewHours.getText().toString().trim();
+
         boolean security;
         boolean visitorsAllowed;
         boolean furnished;
@@ -289,7 +289,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         furnished = (intCondition == 0) ? true : false;
         concealContactPerson = (intConcealContactPerson == 0) ? true : false;
         concealPrice = (intConcealPrice == 0) ? true : false;
-        concealUnits = (intConcealUnits == 0)? true : false;
+        concealUnits = false;
         includeBillsInRate = (intIncludeBillsInRate == 0) ? true : false;
 
         if(intAcceptedSex == 0){
@@ -313,6 +313,17 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
             Toast.makeText(getApplicationContext(), "Please enter price.",Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if(!TextUtils.isEmpty(startCurfewHours.getText().toString()) && TextUtils.isEmpty(endCurfewHours.getText().toString())){
+            Toast.makeText(getApplicationContext(),"Please fill in end of curfew time.",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!TextUtils.isEmpty(endCurfewHours.getText().toString()) && TextUtils.isEmpty(startCurfewHours.getText().toString())){
+            Toast.makeText(getApplicationContext(),"Please fill in start of curfew time.",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String curfewHours = startCurfewHours.getText().toString().trim() + "-" + endCurfewHours.getText().toString().trim();
 
         if(establishmentType == 1){
             if(TextUtils.isEmpty(apartmentRentYears.getText().toString().trim())){
@@ -358,12 +369,19 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
 
         databaseReference = FirebaseDatabase.getInstance().getReference("establishment").push();
         String id = databaseReference.getKey();
+        String headerUrl;
+        if(filePath != null){
+            headerUrl = filePath.getLastPathSegment();
+        }
+        else{
+            headerUrl="";
+        }
         if(establishmentType == 1){
-            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,review, latitude,longitude,mPlace,unit,numUnitsAvailable,picture);
+            newEstablishment  = new Apartment_Item(establishmentNameString,contactPerson, contactNumber, contactNumber2, price, address, curfewHours, visitorsAllowed, establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson, concealPrice, concealUnits, rentYears, furnished,rating,id, user.getId(), isFixedPrice,review, latitude,longitude,mPlace,unit,numUnitsAvailable,picture,headerUrl);
             databaseReference.setValue(newEstablishment);
         }
         else if(establishmentType == 0){
-            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber2, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,review,latitude,longitude,mPlace,unit,numUnitsAvailable,acceptedSex,picture);
+            newEstablishment = new Dormitory_Item(establishmentNameString,contactPerson, contactNumber,contactNumber2, price, address,curfewHours,visitorsAllowed,establishmentType, includeBillsInRate, distanceFromCampus[0], security, concealContactPerson,concealPrice,concealUnits, ratePerHead,intCapacityPerUnit, rating,id,user.getId(),furniture,review,latitude,longitude,mPlace,unit,numUnitsAvailable,acceptedSex,picture,headerUrl);
             databaseReference.setValue(newEstablishment);
         }
         saveImage(id);
@@ -387,6 +405,7 @@ public class AddEstablishment extends AppCompatActivity implements GoogleApiClie
         concealPriceSpinner.setSelection(1);
         concealUnitsSpinner = (Spinner)findViewById(R.id.concealUnitsSpinner);
         concealUnitsSpinner.setSelection(1);
+        concealUnitsSpinner.setVisibility(View.GONE);
         includeBillsInRateSpinner = (Spinner)findViewById(R.id.includeBillsInRateSpinner);
         securitySpinner = (Spinner)findViewById(R.id.securitySpinner);
         visitorsAllowedSpinner = (Spinner)findViewById(R.id.visitorsAllowedSpinner);

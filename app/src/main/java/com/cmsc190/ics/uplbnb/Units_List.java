@@ -62,10 +62,10 @@ public class Units_List extends Fragment implements View.OnClickListener {
                 }else{
                     if(user != null){
                         if(e != null){
-                            if(user.getUser_type().equals("renter") || !user.getId().equals(e.getOwner_id()) ){
+                            if(user.getUser_type().equals("renter") || (!user.getId().equals(e.getOwner_id()) && !user.getUser_type().equals("admin")) ){
                                 addUnitFab.setVisibility(View.GONE);
                             }
-                            else if(user.getId().equals(e.getOwner_id())){
+                            else if(user.getId().equals(e.getOwner_id()) || user.getUser_type().equals("admin")){
                                 addUnitFab.setVisibility(View.VISIBLE);
                             }
                         }
@@ -96,10 +96,12 @@ public class Units_List extends Fragment implements View.OnClickListener {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(establishmentType == 1){
                     e = dataSnapshot.getValue(Apartment_Item.class);
+//                    getActivity().setTitle(e.getEstablishmentName());
                     initUser();
                 }
                 else{
                     e = dataSnapshot.getValue(Dormitory_Item.class);
+//                    getActivity().setTitle(e.getEstablishmentName());
                     initUser();
                 }
             }

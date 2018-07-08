@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -35,6 +36,7 @@ public class FilterDialogFragment extends DialogFragment {
     Button resetButton;
     Button submitButton;
     LinearLayout dormTenantLayout;
+    FilterInfo filterInfo;
     public interface NoticeDialogListener {
         public void onDialogPositiveClick(DialogFragment dialog);
         public void onDialogNegativeClick(DialogFragment dialog);
@@ -43,6 +45,7 @@ public class FilterDialogFragment extends DialogFragment {
     public interface OnInputListener{
         void sendFilter(FilterInfo filterInfo);
     }
+
 
     public OnInputListener mOnInputListener;
     // Use this instance of the interface to deliver action events
@@ -164,7 +167,6 @@ public class FilterDialogFragment extends DialogFragment {
         tenantsSpinner = (Spinner)view.findViewById(R.id.filterTenants);
         ratingBar = (RatingBar)view.findViewById(R.id.filterRatingBar);
         cancelButton = (Button)view.findViewById(R.id.filterCancel);
-        resetButton = (Button)view.findViewById(R.id.filterReset);
         submitButton = (Button)view.findViewById(R.id.filterSubmit);
         dormTenantLayout = (LinearLayout)view.findViewById(R.id.filterDormTenantsLayout);
         dormTenantLayout.setVisibility(View.GONE);

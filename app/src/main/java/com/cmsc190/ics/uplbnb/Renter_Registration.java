@@ -109,6 +109,7 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
                                         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         startActivity(i);
                                         progressDialog.dismiss();
+                                        getActivity().finish();
 
                                     }
                                     else{
@@ -119,8 +120,8 @@ public class Renter_Registration extends Fragment implements View.OnClickListene
                                 }
                             });
 
-                            progressDialog.dismiss();
-                            Toast.makeText(getActivity(),"Renter successfully registered!",Toast.LENGTH_SHORT).show();
+
+
                         }
                         else{
                             progressDialog.dismiss();
